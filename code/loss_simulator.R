@@ -8,5 +8,3 @@ simulation_run = function(simulator, n_iter = 100)
     dfloss <- rbind(dfloss, test_all(data))
   }
 }
-
-print(1)
