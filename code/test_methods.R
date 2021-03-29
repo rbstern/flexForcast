@@ -7,7 +7,7 @@ source('./method_estimate/QAR.R')
 source('./method_estimate/NNKCDE.R')
 source('./method_estimate/GARCH.R')
 source('./method_estimate/FLEXCODE.R')
-source('./method_training.R')
+source('./set_params.R')
 
 library(rlang)
 library(tidyverse)

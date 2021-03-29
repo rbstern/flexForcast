@@ -1,5 +1,7 @@
+source("./test_methods.R")
+source("./loss_simulator.R")
 
+####################################################
 
-source("AR.R")
-source("ARMAJUMP.R")
-source("...")
+source("./simulators/AR.R")
+source("./simulators/ARMA.R")

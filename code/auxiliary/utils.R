@@ -73,3 +73,9 @@ crosses = function(y,yq){
   }
   return(count/(length(y)-1))
 }
+
+mat2_3d2 <- function(inmat, n) {
+  if (nrow(inmat) %% n != 0) stop("incompatible dimensions provided")
+  dims <- c(nrow(inmat) %/% n, ncol(inmat), n)
+  array(unlist(split(inmat, gl(n, dims[1])), use.names = FALSE), dim = dims)
+}
