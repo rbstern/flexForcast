@@ -35,5 +35,6 @@ simulation_run = function(simulator, n_iter = 100, read=NULL)
     }
   }
   
+  CatchupPause(0.001)
   return(list(pbloss=df_pbloss,cdeloss=df_cdeloss))
 }

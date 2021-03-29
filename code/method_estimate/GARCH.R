@@ -1,5 +1,5 @@
 #install.packages('rugarch')
-library(rugarch)
+#library(rugarch)
 #source("C:/Users/NAJA INFO/Documents/RIPPLE/FlexCodeTS/utils.R")
 
 GARCH.run=function(ytrain,yeval,ytest,alpha_seq,xtrain=NULL,xeval=NULL,xtest=NULL,armaOrder,garchOrder){

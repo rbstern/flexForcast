@@ -1,5 +1,5 @@
 coeffs=c(0.38,0.4,0.21)
-n_obs_list = c(200,250)
+n_obs_list = c(1000,5000)
 n_iter=100
 
 t_student_ar.sim = function(coeffs,n,df=3){
@@ -35,7 +35,7 @@ art_simulator = function(n_obs, coeffs)
 for (n_obs in n_obs_list) {
   
   this_art_simulator = partial(art_simulator,n_obs=n_obs,coeffs=coeffs)
-  this_loss = simulation_run(this_ar_simulator, n_iter = n_iter)
+  this_loss = simulation_run(this_art_simulator, n_iter = n_iter)
   
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss

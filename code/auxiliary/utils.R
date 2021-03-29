@@ -79,3 +79,9 @@ mat2_3d2 <- function(inmat, n) {
   dims <- c(nrow(inmat) %/% n, ncol(inmat), n)
   array(unlist(split(inmat, gl(n, dims[1])), use.names = FALSE), dim = dims)
 }
+
+CatchupPause <- function(Secs){
+  Sys.sleep(Secs) #pause to let connection work
+  closeAllConnections()
+  gc()
+}
