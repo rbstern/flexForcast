@@ -3,6 +3,7 @@ options(digits = 4)
 library(quantreg) # For quantile regression
 library(qpcR)
 library(tseries)
+#source('./auxiliary/utils.R')
 
 
 lagorder = function(x,maxorder){ # maxorder is the maximum lag number you allow
@@ -68,23 +69,6 @@ QuantileAR <- function(df,tauseq){
   return(list(quantiles,coefs))
 }
 
-pinball_loss=function(y,y_predicted,alpha){
-  diff = y-y_predicted
-  mask = y > y_predicted
-  loss=(alpha*sum(diff[mask])-(1-alpha)*sum(diff[!mask]))/length(y)
-  return(loss)
-}
-
-crosses = function(y,yq){
-  compare = y > yq
-  count = 0
-  for (j in 2:length(y)){
-    if (compare[j]!=compare[j-1]){
-      count = count + 1
-    }
-  }
-  return(count/(length(y)-1))
-}
 
 QAR.predict_quantiles = function(dftrain,dftest,qar_output,tauseq,L){
 
@@ -117,7 +101,7 @@ QAR.predict_quantiles = function(dftrain,dftest,qar_output,tauseq,L){
   return(quantiles)
 }
 
-QAR.run = function(ytrain,y_new,tauseq,L=0){
+QAR.run = function(ytrain,ytest,tauseq,L=0){
 
   if (L==0){
     L = lagorder(ytrain, maxorder = 24)
@@ -130,6 +114,19 @@ QAR.run = function(ytrain,y_new,tauseq,L=0){
   qtest= QAR.predict_quantiles(dftrain,dftest,qar,tauseq,L)
   return(qtest)
 
+}
+
+qar_training = function(train_valid_test_sets, alpha_seq, L)
+{
+  ytrain=train_valid_test_sets$ytrain
+  ytest=train_valid_test_sets$ytest
+  qar_output = QAR.run(ytrain, ytest, alpha_seq, L)
+  qar_loss = c()
+  for (i in 1:length(alpha_seq))
+  {
+    qar_loss = c(qar_loss, qar_output[[i]][[2]])
+  }
+  list(cdeloss = NULL, pbloss = qar_loss)
 }
 
 QAR.plot = function(y,quantiles,tauseq){

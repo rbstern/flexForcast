@@ -1,30 +1,8 @@
 #source("C:/Users/NAJA INFO/Documents/RIPPLE/FlexCodeTS/utils.R")
 #devtools::install_github("tpospisi/NNKCDE/r")
+#source('./auxiliary/utils.R')
 library(NNKCDE)
 options(scipen = 999)
-
-quantile = function(cde,alpha,z_grid){
-  
-  CDF = cumsum(cde)/sum(cde)
-  idx = which.min(abs(CDF-alpha))
-  
-  if (CDF[idx] > alpha){
-      
-      a = z_grid[idx-1]
-      b = z_grid[idx]
-      Fa = CDF[idx-1]
-      Fb = CDF[idx]
-    
-  } else {
-    a = z_grid[idx]
-    b = z_grid[idx+1]
-    Fa = CDF[idx]
-    Fb = CDF[idx+1]
-  }
-  
-  q_alpha = ((b-a)*(alpha-Fa)/(Fb-Fa))+a
-  return(q_alpha)
-}
 
 
 NNKCDE.train = function(train_valid_test_sets,alpha_seq){
@@ -100,6 +78,17 @@ NNKCDE.pbloss = function(NNKCDE_output){
   }
   
   return(results)
+}
+
+nnkcde_training   = function(train_valid_test_sets, alpha_seq)
+{
+  nnkcde_output= NNKCDE.train(train_valid_test_sets, alpha_seq)
+  z_grid=nnkcde_output$output$z_grid
+  cdes=nnkcde_output$output$cdes
+  this_pbloss = NNKCDE.pbloss(nnkcde_output$output)
+  ytest=train_valid_test_sets$ytest
+  this_cdeloss = cdeloss(ytest, z_grid, cdes)
+  list(cdeloss = this_cdeloss, pbloss = this_pbloss)
 }
 
 ############################################################################

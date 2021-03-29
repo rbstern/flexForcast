@@ -14,6 +14,28 @@ quantiles <- function(pred_values,
   return(t(quantiles))
 }
 
+quantile = function(cde,alpha,z_grid){
+  
+  CDF = cumsum(cde)/sum(cde)
+  idx = which.min(abs(CDF-alpha))
+  
+  if (CDF[idx] > alpha){
+    
+    a = z_grid[idx-1]
+    b = z_grid[idx]
+    Fa = CDF[idx-1]
+    Fb = CDF[idx]
+    
+  } else {
+    a = z_grid[idx]
+    b = z_grid[idx+1]
+    Fa = CDF[idx]
+    Fb = CDF[idx+1]
+  }
+  
+  q_alpha = ((b-a)*(alpha-Fa)/(Fb-Fa))+a
+  return(q_alpha)
+}
 
 cdeloss <- function(z_test,z_grid,pred) {
   
@@ -32,4 +54,22 @@ cdeloss <- function(z_test,z_grid,pred) {
   
   return(integrals - 2 * likeli)
   
+}
+
+pinball_loss=function(y,y_predicted,alpha){
+  diff = y-y_predicted
+  mask = y > y_predicted
+  loss=(alpha*sum(diff[mask])-(1-alpha)*sum(diff[!mask]))/length(y)
+  return(loss)
+}
+
+crosses = function(y,yq){
+  compare = y > yq
+  count = 0
+  for (j in 2:length(y)){
+    if (compare[j]!=compare[j-1]){
+      count = count + 1
+    }
+  }
+  return(count/(length(y)-1))
 }

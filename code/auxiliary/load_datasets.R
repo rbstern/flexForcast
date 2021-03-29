@@ -3,13 +3,13 @@ load.dataset= function(name){
 
   if (name=='EUROSTOXX'){
 
-    data <- read_csv("./data/eurostoxx_logreturns.csv")$x
+    data <- read_csv("../data/eurostoxx_logreturns.csv")$x
     data <- as.data.frame(data)
     colnames(data)="y"
 
   } else if (name == 'BITCOIN'){
 
-    data <- read_csv("./data/BTCUSD_Candlestick_1_M_BID_01.07.2020-01.08.2020.csv")$Close
+    data <- read_csv("../data/BTCUSD_Candlestick_1_M_BID_01.07.2020-01.08.2020.csv")$Close
 
     # select a subset of the series
     data=log(data[-1]/data[-length(data)])
@@ -21,43 +21,43 @@ load.dataset= function(name){
 
   } else if (name == 'AR1') {
 
-    data <- read_csv("./data/AR1.csv")$`0`
+    data <- read_csv("../data/AR1.csv")$`0`
     data <- as.data.frame(data)
     colnames(data)="y"
 
   } else if (name == 'AR3') {
 
-    data <- read.csv('./data/AR3.csv')$X0
+    data <- read.csv('../data/AR3.csv')$X0
     data <- as.data.frame(data)
     colnames(data)="y"
 
   } else if (name == 'ARMA') {
 
-    data <- read.csv('./data/ARMA1_1.csv')$X0
+    data <- read.csv('../data/ARMA1_1.csv')$X0
     data <- as.data.frame(data)
     colnames(data)="y"
 
   } else if (name == 'ARMA JUMP') {
 
-    data <- read.csv('./data/armajump.csv')$X0
+    data <- read.csv('../data/armajump.csv')$X0
     data <- as.data.frame(data)
     colnames(data)="y"
 
   } else if (name == 'JUMP DIFFUSION'){
 
-    data <- read.csv('./data/jump_diffusion.csv')[,-1]
+    data <- read.csv('../data/jump_diffusion.csv')[,-1]
     colnames(data)[4] = "y" #log-returns
 
   } else if (name == 'CPI'){
 
-    data <- read.csv('./data/USA_data.csv')[,-1]
+    data <- read.csv('../data/USA_data.csv')[,-1]
     colnames(data)[1]="date"
     colnames(data)[2]="y"
     data$date = as.Date(data$date)
 
   } else if (name == 'RPIX') {
 
-    data <- read.csv('./data/RPIX.csv')[,-1]
+    data <- read.csv('../data/RPIX.csv')[,-1]
     colnames(data)[2]="y"
     data$year = substr(data$DATE,1,4)
     data$month = rep(c("01","02","03","04","05","06","07","08","09","10","11","12"),length.out = nrow(data))

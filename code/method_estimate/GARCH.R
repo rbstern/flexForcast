@@ -2,7 +2,6 @@
 library(rugarch)
 #source("C:/Users/NAJA INFO/Documents/RIPPLE/FlexCodeTS/utils.R")
 
-
 GARCH.run=function(ytrain,yeval,ytest,alpha_seq,xtrain=NULL,xeval=NULL,xtest=NULL,armaOrder,garchOrder){
 
   model.garch = ugarchspec(mean.model=list(armaOrder=c(1,1)),
@@ -11,11 +10,6 @@ GARCH.run=function(ytrain,yeval,ytest,alpha_seq,xtrain=NULL,xeval=NULL,xtest=NUL
 
 
   model.garch.fit = ugarchfit(data=c(ytrain,yeval,ytest), spec=model.garch,  solver = 'hybrid' ,out.sample = length(ytest))
-  # modelfor=ugarchforecast(model.garch.fit, data = NULL, n.ahead = 1, n.roll
-  #                         = length(ztest), out.sample = length(ztest))
-
-
-
   modelfor=ugarchforecast(model.garch.fit, data = ytest, n.ahead = 1,n.roll = length(ytest))
   
   quantiles_list = list()
@@ -63,7 +57,7 @@ GARCH.pinball_loss = function(garch_output,ytest,alpha_seq){
 # calcula loss
 # essa funcao eh generica para todos os modelos
 
- GARCH.cde_estimate = function(garch_output,ytest){
+GARCH.cde_estimate = function(garch_output,ytest){
 
 
    garch_model = garch_output$garch_model
@@ -83,6 +77,21 @@ GARCH.pinball_loss = function(garch_output,ytest,alpha_seq){
 
    return(cdes)
  }
+ 
+garch_training = function(train_valid_test_sets,alpha_seq)
+{
+  ytrain=train_valid_test_sets$ytrain
+  yvalid=train_valid_test_sets$yvalid
+  ytest=train_valid_test_sets$ytest
+  garch_output = GARCH.run(ytrain,yvalid,ytest,alpha_seq)
+  cdes = GARCH.cde_estimate(garch_output,ytest)
+  
+  cde_loss_garch = cdeloss(ytest,garch_output$z_grid,cdes)
+  garch_loss = GARCH.pinball_loss(garch_output,ytest,alpha_seq)
+  
+  list(cdeloss = cde_loss_garch, pbloss = garch_loss)
+}
+
 
 #garch_output = GARCH.run(ztrain,zeval,ztest)
 #cdes = GARCH.cde_estimate(garch_output,ytest)
