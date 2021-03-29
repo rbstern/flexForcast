@@ -1,37 +1,18 @@
 #devtools::install_github("tpospisi/NNKCDE/r")
-
-source('./auxiliary/load_datasets.R')
-source('./auxiliary/preprocess.R')
-source('./auxiliary/utils.R')
-source('./method_estimate/QAR.R')
-source('./method_estimate/NNKCDE.R')
-source('./method_estimate/GARCH.R')
-source('./method_estimate/FLEXCODE.R')
-source('./set_params.R')
-
-library(rlang)
-library(tidyverse)
-library(quantreg) 
-library(qpcR)
-library(tseries)
-library(NNKCDE)
-library(rugarch)
-library(FlexCoDE)
-
 ###############################################################
 
-p_test=0.15
-p_valid=0.1
-p_train=1-p_test-p_valid
-lags=10
-L=10
-n_cores_flexcode=4
-params = list(p_test=p_test,p_valid=p_valid,p_train=1-p_test-p_valid,
-              lags=lags,L=L,n_cores_flexcode=n_cores_flexcode)
-
-dataset=load.dataset("AR1")
-train_valid_test_sets = create_train_valid_test_sets(dataset,p_valid=p_valid,p_test=p_test,lags)
-alpha_seq=c(0.05,0.20,0.50,0.80,0.95)
+# p_test=0.15
+# p_valid=0.1
+# p_train=1-p_test-p_valid
+# lags=10
+# L=10
+# n_cores_flexcode=4
+# params = list(p_test=p_test,p_valid=p_valid,p_train=1-p_test-p_valid,
+#               lags=lags,L=L,n_cores_flexcode=n_cores_flexcode)
+# 
+# dataset=load.dataset("AR1")
+# train_valid_test_sets = create_train_valid_test_sets(dataset,p_valid=p_valid,p_test=p_test,lags)
+# alpha_seq=c(0.05,0.20,0.50,0.80,0.95)
 
 test_methods = function(train_valid_test_sets,alpha_seq,params){
   
