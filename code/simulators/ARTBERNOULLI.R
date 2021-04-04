@@ -3,7 +3,7 @@ p_bernoulli = 0.85
 ar_param = 0.80
 n_obs_list = c(1000,5000)
 
-bernoulli_ar.sim = function(p_bernoulli,ar_param,n){
+bernoulli_art.sim = function(p_bernoulli,ar_param,n,df=3){
   
   #initial data point is distributed N(0,1)
   points = rnorm(1,0,1)
@@ -15,7 +15,7 @@ bernoulli_ar.sim = function(p_bernoulli,ar_param,n){
   for (i in 1:n){
     
     # ERROR ~ N(0,1)
-    error_t = rnorm(1)
+    error_t = rt(1,df)
     new_point = ar_param*X_t*points[length(points)]+error_t
     points = c(points,new_point)
   }
@@ -24,9 +24,9 @@ bernoulli_ar.sim = function(p_bernoulli,ar_param,n){
   return(points)
 }
 
-bernoulli_simulator = function(p_bernoulli,ar_param,n_obs)
+tbernoulli_simulator = function(p_bernoulli,ar_param,n_obs)
 {
-  data = bernoulli_ar.sim(p_bernoulli,ar_param,n_obs)
+  data = bernoulli_art.sim(p_bernoulli,ar_param,n_obs)
   data <- as.data.frame(data)
   colnames(data) = "y"
   return(data)
@@ -34,7 +34,7 @@ bernoulli_simulator = function(p_bernoulli,ar_param,n_obs)
 
 for (n_obs in n_obs_list) {
   
-  this_simulator = partial(bernoulli_simulator,
+  this_simulator = partial(tbernoulli_simulator,
                            p_bernoulli=p_bernoulli,
                            ar_param=ar_param,
                            n_obs=n_obs)
@@ -43,10 +43,10 @@ for (n_obs in n_obs_list) {
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss
   
-  write_rds(this_pbloss, paste0("../results/PBLOSS_BERNOULLI_",n_obs,"obs.rds"))
-  write_rds(this_pbloss, paste0("../results/CDELOSS_BERNOULLI_",n_obs,"obs.rds"))
- 
+  write_rds(this_pbloss, paste0("../results/PBLOSS_TBERNOULLI_",n_obs,"obs.rds"))
+  write_rds(this_pbloss, paste0("../results/CDELOSS_TBERNOULLI_",n_obs,"obs.rds"))
+  
   processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
-  write_rds(processed_loss,paste0("../results/processed/BERNOULLI_",n_obs,"obs.rds"))
-   
+  write_rds(processed_loss,paste0("../results/processed/TBERNOULLI_",n_obs,"obs.rds"))
+  
 }

@@ -15,8 +15,8 @@ arma_simulator = function(n_obs, param)
 
 for (n_obs in n_obs_list) {
   
-  this_arma_simulator = partial(arma_simulator,n_obs=n_obs,param=param)
-  this_loss = simulation_run(this_arma_simulator, n_iter = n_iter)
+  this_simulator = partial(arma_simulator,n_obs=n_obs,param=param)
+  this_loss = simulation_run(this_simulator, n_iter = n_iter)
   
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss
@@ -24,6 +24,8 @@ for (n_obs in n_obs_list) {
   write_rds(this_pbloss, paste0("../results/PBLOSS_ARMA_11_",n_obs,"obs.rds"))
   write_rds(this_pbloss, paste0("../results/CDELOSS_ARMA_11_",n_obs,"obs.rds"))
   
+  processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
+  write_rds(processed_loss,paste0("../results/processed/ARMA_11_",n_obs,"obs.rds"))
 }
 
 

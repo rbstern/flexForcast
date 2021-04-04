@@ -4,8 +4,8 @@
 
 GARCH.run=function(ytrain,yeval,ytest,alpha_seq,xtrain=NULL,xeval=NULL,xtest=NULL,armaOrder,garchOrder){
 
-  model.garch = ugarchspec(mean.model=list(armaOrder=c(1,1)),
-                           variance.model=list(garchOrder=c(1,1)),
+  model.garch = ugarchspec(mean.model=list(armaOrder=c(lags,lags)),
+                           variance.model=list(garchOrder=c(lags,lags)),
                            distribution.model = "std")
 
 

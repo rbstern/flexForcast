@@ -34,8 +34,8 @@ art_simulator = function(n_obs, coeffs)
 
 for (n_obs in n_obs_list) {
   
-  this_art_simulator = partial(art_simulator,n_obs=n_obs,coeffs=coeffs)
-  this_loss = simulation_run(this_art_simulator, n_iter = n_iter)
+  this_simulator = partial(art_simulator,n_obs=n_obs,coeffs=coeffs)
+  this_loss = simulation_run(this_simulator, n_iter = n_iter)
   
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss
@@ -43,5 +43,7 @@ for (n_obs in n_obs_list) {
   write_rds(this_pbloss, paste0("../results/PBLOSS_ART_3_",n_obs,"obs.rds"))
   write_rds(this_pbloss, paste0("../results/CDELOSS_ART_3_",n_obs,"obs.rds"))
   
+  processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
+  write_rds(processed_loss,paste0("../results/processed/ART_3_",n_obs,"obs.rds"))
 }
 

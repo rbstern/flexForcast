@@ -1,29 +1,15 @@
 #devtools::install_github("tpospisi/NNKCDE/r")
 ###############################################################
 
-# p_test=0.15
-# p_valid=0.1
-# p_train=1-p_test-p_valid
-# lags=10
-# L=10
-# n_cores_flexcode=4
-# params = list(p_test=p_test,p_valid=p_valid,p_train=1-p_test-p_valid,
-#               lags=lags,L=L,n_cores_flexcode=n_cores_flexcode)
-# 
-# dataset=load.dataset("AR1")
-# train_valid_test_sets = create_train_valid_test_sets(dataset,p_valid=p_valid,p_test=p_test,lags)
-# alpha_seq=c(0.05,0.20,0.50,0.80,0.95)
-
 test_methods = function(train_valid_test_sets,alpha_seq,params){
   
   p_test=params$p_test
   p_valid=params$p_valid
   p_train=params$p_train
   lags=params$lags
-  L=params$L
   n_cores_flexcode=params$n_cores_flexcode
   
-  qar_training2 = partial(qar_training,L=L)
+  qar_training2 = partial(qar_training,L=lags)
   flexcode_rf   = partial(flexcode_training,p_train=p_train,regressionFunction=regressionFunction.Forest,lags_y=lags,n_cores=n_cores_flexcode)
   flexcode_xgb  = partial(flexcode_training,p_train=p_train,regressionFunction=regressionFunction.XGBoost,lags_y=lags,n_cores=n_cores_flexcode)
   

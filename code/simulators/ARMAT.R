@@ -42,9 +42,9 @@ armat_simulator = function(n_obs, ar_coeffs,ma_coeffs)
 
 for (n_obs in n_obs_list) {
   
-  this_armat_simulator = partial(armat_simulator,ar_coeffs=ar_coeffs,
-                                 ma_coeffs=ma_coeffs,n_obs=n_obs)
-  this_loss = simulation_run(this_armat_simulator, n_iter = n_iter)
+  this_simulator = partial(armat_simulator,ar_coeffs=ar_coeffs,
+                           ma_coeffs=ma_coeffs,n_obs=n_obs)
+  this_loss = simulation_run(this_simulator, n_iter = n_iter)
   
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss
@@ -52,6 +52,8 @@ for (n_obs in n_obs_list) {
   write_rds(this_pbloss, paste0("../results/PBLOSS_ARMAT_",n_obs,"obs.rds"))
   write_rds(this_pbloss, paste0("../results/CDELOSS_ARMAT_",n_obs,"obs.rds"))
   
+  processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
+  write_rds(processed_loss,paste0("../results/processed/ARMAT_",n_obs,"obs.rds"))
 }
 
 
