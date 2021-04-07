@@ -1,9 +1,6 @@
 n_obs_list=c(1000,5000)
 n_iter=100
 
-this_data=data[(n_obs*(k-1)+1):(n_obs*i),2:5]
-colnames(data_i)[4]="y"
-
 jumpdiffusion_simulator = function(n_obs, data, k){
   
   if (n_obs!=1000 & n_obs!=5000){
