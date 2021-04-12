@@ -3,7 +3,11 @@
 #source("C:/Users/NAJA INFO/Documents/RIPPLE/FlexCodeTS/utils.R")
 
 GARCH.run=function(ytrain,yeval,ytest,alpha_seq,xtrain=NULL,xeval=NULL,xtest=NULL,armaOrder,garchOrder){
-
+  ytrain<<-ytrain
+  yeval<<-yeval
+  ytest<<-ytest
+  
+  try({
   model.garch = ugarchspec(mean.model=list(armaOrder=c(lags,lags)),
                            variance.model=list(garchOrder=c(lags,lags)),
                            distribution.model = "std")
@@ -22,6 +26,27 @@ GARCH.run=function(ytrain,yeval,ytest,alpha_seq,xtrain=NULL,xeval=NULL,xtest=NUL
     quantiles_list[[ii]]=q_garch_ii
   }
   
+  },silent = TRUE)
+  
+  if (!exists("modelfor")) {
+    
+    fit=auto.arima(c(ytrain,yeval))
+    fit2=Arima(ytest,model=fit)
+    
+    quantiles_list = list()
+    #pred=modelfor@forecast$seriesFor[1,1:length(ytest)]
+    
+    for (ii in 1:length(alpha_seq)){
+      q_garch_ii = qnorm(alpha_seq[ii],
+                         mean=fit2$fitted[(length(c(ytrain,yeval))+1):length(c(ytrain,yeval,ytest))],
+                         sd=fit2$sigma2**(1/2))
+      quantiles_list[[ii]]=q_garch_ii
+    }
+    
+  }
+  
+  convergence_garch=exists("modelfor")
+  
   #plot=matplot(data.frame(ztest,q_garch_05,q_garch_20,q_garch_80,q_garch_95),type = "l")
 
   n_grid = 1000
@@ -30,9 +55,14 @@ GARCH.run=function(ytrain,yeval,ytest,alpha_seq,xtrain=NULL,xeval=NULL,xtest=NUL
   
   df_quantiles = data.frame(quantiles_list)
   colnames(df_quantiles)=alpha_seq
-  
-  return(list(df_quantiles=df_quantiles,garch_model = model.garch.fit,z_grid=z_grid))
+  if (convergence_garch){
+  return(list(df_quantiles=df_quantiles,garch_model = model.garch.fit,z_grid=z_grid,convergence_garch=convergence_garch))
+  } else{
+    return(list(df_quantiles=df_quantiles,garch_model = fit2,z_grid=z_grid,convergence_garch=convergence_garch))
+  }
 }
+
+
 
 GARCH.pinball_loss = function(garch_output,ytest,alpha_seq){
 
@@ -60,13 +90,23 @@ GARCH.pinball_loss = function(garch_output,ytest,alpha_seq){
 GARCH.cde_estimate = function(garch_output,ytest){
 
 
-   garch_model = garch_output$garch_model
+
    z_grid = garch_output$z_grid
+   
+   if (garch_output$convergence_garch) {
+     
+     garch_model = garch_output$garch_model
+     modelfor=ugarchforecast(garch_model, data = ytest, n.ahead = 1,n.roll = length(ytest))
+     mean_vector = modelfor@forecast$seriesFor[1,1:length(ytest)]
+     sigma_vector = modelfor@forecast$sigmaFor[1,1:length(ytest)]
+     
+   } else {
+     
+     mean_vector=fit2$fitted[(length(fit2$fitted)-length(ytest)+1):length(fit2$fitted)]
+     sigma_vector=rep(fit2$sigma2**(1/2),length(ytest))
 
-   modelfor=ugarchforecast(garch_model, data = ytest, n.ahead = 1,n.roll = length(ytest))
-   mean_vector = modelfor@forecast$seriesFor[1,1:length(ytest)]
-   sigma_vector = modelfor@forecast$sigmaFor[1,1:length(ytest)]
-
+   }
+   
    n_grid=1000
    cdes = matrix(0,nrow=length(ytest),ncol=n_grid)
 
@@ -91,6 +131,15 @@ garch_training = function(train_valid_test_sets,alpha_seq)
   
   list(cdeloss = cde_loss_garch, pbloss = garch_loss)
 }
+
+
+
+train_valid_test_sets=NULL
+train_valid_test_sets$ytrain=ytrain
+train_valid_test_sets$yvalid=yeval
+train_valid_test_sets$ytest=ytest
+
+garch_training(train_valid_test_sets,c(0.1,0.2,0.5,0.8,0.9))
 
 
 #garch_output = GARCH.run(ztrain,zeval,ztest)
