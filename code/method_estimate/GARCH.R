@@ -133,17 +133,3 @@ garch_training = function(train_valid_test_sets,alpha_seq)
 }
 
 
-
-train_valid_test_sets=NULL
-train_valid_test_sets$ytrain=ytrain
-train_valid_test_sets$yvalid=yeval
-train_valid_test_sets$ytest=ytest
-
-garch_training(train_valid_test_sets,c(0.1,0.2,0.5,0.8,0.9))
-
-
-#garch_output = GARCH.run(ztrain,zeval,ztest)
-#cdes = GARCH.cde_estimate(garch_output,ytest)
-
-#GARCH_cdeloss = cdeloss(ytest,garch_output$z_grid,cdes)
-#pbloss = GARCH.pinball_loss(garch_output,ytest)
