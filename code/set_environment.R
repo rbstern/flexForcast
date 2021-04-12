@@ -7,6 +7,7 @@ library(tseries)
 library(NNKCDE)
 library(rugarch)
 library(FlexCoDE)
+library(forecast)
 
 # import methods and auxiliary code
 source('./auxiliary/load_datasets.R')
