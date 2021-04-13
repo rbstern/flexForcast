@@ -1,10 +1,3 @@
-options(digits = 4)
-#install.packages('qpcR')
-library(quantreg) # For quantile regression
-library(qpcR)
-library(tseries)
-#source('./auxiliary/utils.R')
-
 
 lagorder = function(x,maxorder){ # maxorder is the maximum lag number you allow
   ordmax = maxorder ; HQ = NULL ; AK = NULL ; SC = NULL ; lagmat = NULL

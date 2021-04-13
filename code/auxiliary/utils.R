@@ -59,7 +59,7 @@ cdeloss <- function(z_test,z_grid,pred) {
 pinball_loss=function(y,y_predicted,alpha){
   diff = y-y_predicted
   mask = y > y_predicted
-  loss=(alpha*sum(diff[mask])-(1-alpha)*sum(diff[!mask]))/length(y)
+  loss=(alpha*sum(diff[mask])-(1-alpha)*sum(diff[!mask]))/length(y_predicted)
   return(loss)
 }
 

@@ -99,12 +99,13 @@ create_train_valid_test_sets = function(dataset,p_valid,p_test,lags=0,remove=0){
       ytest = dataset[(lags+n_train+n_valid+1):nrow(dataset),]
 
       X = data.frame(lagmatrix(dataset$y,lags))
-      X = X[,-1]
+      X = data.frame(X[,-1])
 
       columns = c( )
       for (i in 1:lags){
         columns = c(columns,paste('lag',i,sep=''))
       }
+      
       colnames(X)=columns
 
       Xtrain = X[(lags+1):(lags+n_train),]
