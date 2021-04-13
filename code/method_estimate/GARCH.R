@@ -102,7 +102,7 @@ GARCH.cde_estimate = function(garch_output,ytest){
      
    } else {
      
-     mean_vector=garch_output$fit2$fitted[(length(fit2$fitted)-length(ytest)+1):length(garch_output$fit2$fitted)]
+     mean_vector=garch_output$fit2$fitted[(length(garch_output$fit2$fitted)-length(ytest)+1):length(garch_output$fit2$fitted)]
      sigma_vector=rep(garch_output$fit2$sigma2**(1/2),length(ytest))
 
    }
