@@ -12,7 +12,7 @@ test_methods = function(train_valid_test_sets,alpha_seq,lags,params){
   flexcode_rf   = partial(flexcode_training,p_train=p_train,regressionFunction=regressionFunction.Forest,lags_y=lags,n_cores=n_cores_flexcode)
   flexcode_xgb  = partial(flexcode_training,p_train=p_train,regressionFunction=regressionFunction.XGBoost,lags_y=lags,n_cores=n_cores_flexcode)
   
-  methods = list(qar_training2,nnkcde_training,garch_training,flexcode_rf,flexcode_xgb)
+  methods = list(qar_training,nnkcde_training,garch_training,flexcode_rf,flexcode_xgb)
   nomes = c("QAR","NNKCDE","GARCH","FLEX-RF","FLEX-XGB")
   
   pb_losses = c()

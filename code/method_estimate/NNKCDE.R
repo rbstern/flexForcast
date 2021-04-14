@@ -34,6 +34,7 @@ NNKCDE.train = function(train_valid_test_sets,alpha_seq){
   #z_grid <- seq(minimo-2*abs(minimo),maximo+2*abs(maximo), length.out = n_grid)
   z_grid <- seq(minimo,maximo, length.out = n_grid)
   z_grid=matrix(z_grid, nrow=length(z_grid),ncol=1) 
+  bin_length = z_grid[2]-z_grid[1]
   
   cdes <- obj$predict(Xtest, z_grid)
   
@@ -51,12 +52,19 @@ NNKCDE.train = function(train_valid_test_sets,alpha_seq){
     q_alpha = c()
     
     for (j in 1:length(cdes[,1])){
+
+      q = quantile(cdes[j,],alpha,z_grid)
+      q_alpha = c(q_alpha,q)
       
-      q_alpha = c(q_alpha,quantile(cdes[j,],alpha,z_grid))
     }
     
     q_list[[i]]=q_alpha
     
+  }
+  
+  # adapt cde values so that histogram area sums up to 1
+  for (i in 1:nrow(cdes)){ # normalizacao das cdes
+    cdes[i,]=cdes[i,]/bin_length
   }
   
   output = list(quantiles=q_list,alpha_seq=alpha_seq,ytest=ytest,z_grid=z_grid,cdes=cdes)

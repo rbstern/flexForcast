@@ -19,21 +19,25 @@ quantile = function(cde,alpha,z_grid){
   CDF = cumsum(cde)/sum(cde)
   idx = which.min(abs(CDF-alpha))
   
-  if (CDF[idx] > alpha){
+  if (CDF[1]>alpha){
+    q_alpha = z_grid[1]
+    
+  } else if (CDF[idx] > alpha){
     
     a = z_grid[idx-1]
     b = z_grid[idx]
     Fa = CDF[idx-1]
     Fb = CDF[idx]
+    q_alpha = ((b-a)*(alpha-Fa)/(Fb-Fa))+a
     
   } else {
     a = z_grid[idx]
     b = z_grid[idx+1]
     Fa = CDF[idx]
     Fb = CDF[idx+1]
+    q_alpha = ((b-a)*(alpha-Fa)/(Fb-Fa))+a
   }
   
-  q_alpha = ((b-a)*(alpha-Fa)/(Fb-Fa))+a
   return(q_alpha)
 }
 
