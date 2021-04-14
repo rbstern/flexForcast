@@ -1,8 +1,9 @@
 #source("./test_methods.R")
 
 n_iter=100
-param=list(c(0.3),c(0.45))
+param=list(c(0.3,0.4),c(0.5,0.4))
 n_obs_list = c(1000,5000)
+lags=max(length(param[[1]]),length(param[[2]]))
 
 arma_simulator = function(n_obs, param)
 {
@@ -16,7 +17,7 @@ arma_simulator = function(n_obs, param)
 for (n_obs in n_obs_list) {
   
   this_simulator = partial(arma_simulator,n_obs=n_obs,param=param)
-  this_loss = simulation_run(this_simulator, n_iter = n_iter)
+  this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter)
   
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss

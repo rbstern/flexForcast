@@ -1,8 +1,5 @@
-#install.packages('rugarch')
-#library(rugarch)
-#source("C:/Users/NAJA INFO/Documents/RIPPLE/FlexCodeTS/utils.R")
-
-GARCH.run=function(ytrain,yeval,ytest,alpha_seq,xtrain=NULL,xeval=NULL,xtest=NULL,armaOrder,garchOrder){
+GARCH.run=function(ytrain,yeval,ytest,alpha_seq,lags=1,xtrain=NULL,xeval=NULL,xtest=NULL,armaOrder,garchOrder){
+  
   ytrain<<-ytrain
   yeval<<-yeval
   ytest<<-ytest
@@ -89,8 +86,6 @@ GARCH.pinball_loss = function(garch_output,ytest,alpha_seq){
 
 GARCH.cde_estimate = function(garch_output,ytest){
 
-
-
    z_grid = garch_output$z_grid
    
    if (garch_output$convergence_garch) {
@@ -109,7 +104,13 @@ GARCH.cde_estimate = function(garch_output,ytest){
    
    n_grid=1000
    cdes = matrix(0,nrow=length(ytest),ncol=n_grid)
-
+  
+   ####################
+   #(z_grid)
+   #print(mean_vector)
+   #print(sigma_vector)
+   ####################
+   
    for (i in 1:length(ytest)){
      cdes[i,] = dnorm(z_grid,mean = mean_vector[i],sd=sigma_vector[i])
      cdes[i,] = cdes[i,]/sum(cdes[i,])
