@@ -1,12 +1,11 @@
 #devtools::install_github("tpospisi/NNKCDE/r")
 ###############################################################
 
-test_methods = function(train_valid_test_sets,alpha_seq,params){
+test_methods = function(train_valid_test_sets,alpha_seq,lags,params){
   
   p_test=params$p_test
   p_valid=params$p_valid
   p_train=params$p_train
-  lags=params$lags
   n_cores_flexcode=params$n_cores_flexcode
   
   qar_training2 = partial(qar_training,L=lags)

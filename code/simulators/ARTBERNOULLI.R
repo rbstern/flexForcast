@@ -2,6 +2,7 @@ n_iter=100
 p_bernoulli = 0.85
 ar_param = 0.80
 n_obs_list = c(1000,5000)
+lags=1
 
 bernoulli_art.sim = function(p_bernoulli,ar_param,n,df=3){
   
@@ -38,7 +39,7 @@ for (n_obs in n_obs_list) {
                            p_bernoulli=p_bernoulli,
                            ar_param=ar_param,
                            n_obs=n_obs)
-  this_loss = simulation_run(this_simulator, n_iter = n_iter)
+  this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter)
   
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss

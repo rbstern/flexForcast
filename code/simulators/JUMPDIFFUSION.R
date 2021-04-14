@@ -1,5 +1,6 @@
 n_obs_list=c(1000,5000)
 n_iter=100
+lags_garch=1
 
 jumpdiffusion_simulator = function(n_obs, data, k){
   
@@ -19,7 +20,7 @@ for (n_obs in n_obs_list) {
   data <- read.csv(paste0('../data/jump_diffusion_simulations_',n_obs,'obs.csv'))
   
   this_simulator = partial(jumpdiffusion_simulator,n_obs=n_obs,data=data)
-  this_loss = simulation_run(this_simulator, n_iter = n_iter, read=TRUE)
+  this_loss = simulation_run(this_simulator, lags=lags_garch, n_iter = n_iter, read=TRUE)
   
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss

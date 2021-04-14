@@ -4,6 +4,7 @@ std=0.05
 jump_prob=0.05
 n_obs_list=c(1000,5000)
 n_iter=100
+lags=1
 
 
 armajump.sim = function(n_obs, c, ar, std, jump_prob)
@@ -60,7 +61,7 @@ for (n_obs in n_obs_list) {
   
   this_simulator = partial(armajump_simulator, n_obs=n_obs,
                             c=c, ar=ar, std=std, jump_prob=jump_prob)
-  this_loss = simulation_run(this_simulator, n_iter = n_iter)
+  this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter)
   
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss

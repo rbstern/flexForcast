@@ -5,8 +5,14 @@ flexcode_training = function(train_valid_test_sets,alpha_seq,p_train,
   
   ytrain=train_valid_test_sets$ytrain
   ytest=train_valid_test_sets$ytest
+  
   Xtrain=train_valid_test_sets$Xtrain
   Xtest=train_valid_test_sets$Xtest
+  
+  if (is.null(nrow(Xtrain))) {
+    Xtrain=matrix(Xtrain)
+    Xtest=matrix(Xtest)
+  }
   
   fit <- fit_flexcode_timeseries(X=Xtrain,y=ytrain,
                                  lags_x=lags_x,

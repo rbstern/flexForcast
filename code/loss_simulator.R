@@ -2,7 +2,7 @@
 # for a dataset that generated n observations, k will read the k-th observation
 # from the full dataset
 
-simulation_run = function(simulator, n_iter = 100, read=NULL)
+simulation_run = function(simulator, lags=0, n_iter = 100, read=NULL)
 {
   
   for(i in 1:n_iter)
@@ -15,10 +15,10 @@ simulation_run = function(simulator, n_iter = 100, read=NULL)
     }
     
     
-    train_valid_test_sets = create_train_valid_test_sets(dataset=data)
+    train_valid_test_sets = create_train_valid_test_sets(dataset=data,lags=lags)
     
     print(paste("Iteration: ", i, "/", n_iter, sep = ""))
-    loss <- test_methods(train_valid_test_sets)
+    loss <- test_methods(train_valid_test_sets,lags=lags)
 
     
     if (i==1){

@@ -2,6 +2,7 @@ ar_coeffs=c(0.3,0.1,0.2)
 ma_coeffs=c(0.2,0.15)
 n_obs_list = c(200,250)
 n_iter=100
+lags=max(length(ar_coeffs),length(ma_coeffs))
 
 t_student_arma.sim = function(ar_coeffs,ma_coeffs,n,df=3){
   
@@ -44,7 +45,7 @@ for (n_obs in n_obs_list) {
   
   this_simulator = partial(armat_simulator,ar_coeffs=ar_coeffs,
                            ma_coeffs=ma_coeffs,n_obs=n_obs)
-  this_loss = simulation_run(this_simulator, n_iter = n_iter)
+  this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter)
   
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss
