@@ -74,16 +74,6 @@ GARCH.pinball_loss = function(garch_output,ytest,alpha_seq){
 
 }
 
-
-
-# dividir a funcao em
-#1 algo especifico para o garch (estima densidade garch): recebe output do garch, ytest, zgrid(teste)
-# retorna a densidade estimada para cada um dos elementos
-# usar o mesmo zgrid do flexcode (ymin,ymax)treino, 1000 pontos
-# segunda funcao: cdeloss, recebe ytest,zgrid,densidades estimadas
-# calcula loss
-# essa funcao eh generica para todos os modelos
-
 GARCH.cde_estimate = function(garch_output,ytest){
 
    z_grid = garch_output$z_grid
@@ -104,12 +94,6 @@ GARCH.cde_estimate = function(garch_output,ytest){
    
    n_grid=1000
    cdes = matrix(0,nrow=length(ytest),ncol=n_grid)
-  
-   ####################
-   #(z_grid)
-   #print(mean_vector)
-   #print(sigma_vector)
-   ####################
    
    for (i in 1:length(ytest)){
      cdes[i,] = dnorm(z_grid,mean = mean_vector[i],sd=sigma_vector[i])
