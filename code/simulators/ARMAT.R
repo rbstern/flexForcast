@@ -1,6 +1,6 @@
 ar_coeffs=c(0.3,0.1,0.2)
 ma_coeffs=c(0.2,0.15)
-n_obs_list = c(200,250)
+n_obs_list = c(1000,5000)
 n_iter=100
 lags=max(length(ar_coeffs),length(ma_coeffs))
 
