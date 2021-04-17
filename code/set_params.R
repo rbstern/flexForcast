@@ -10,3 +10,4 @@ params = list(p_test=p_test,p_valid=p_valid,p_train=1-p_test-p_valid,
 
 create_train_valid_test_sets = partial(create_train_valid_test_sets,p_valid=p_valid,p_test=p_test  )
 test_methods = partial(test_methods,params=params,alpha_seq=alpha_seq)
+final_loss_comparations = partial(final_loss_comparations,alpha_seq=alpha_seq)

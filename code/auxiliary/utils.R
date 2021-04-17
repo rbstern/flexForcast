@@ -121,3 +121,52 @@ CatchupPause <- function(Secs){
   closeAllConnections()
   gc()
 }
+
+final_loss_comparations = function(alpha_seq){
+  
+  n_simulations = length(list.files('../results/processed/'))
+  n_losses = 1 + length(alpha_seq)
+  
+  cde_table = matrix(0,nrow=n_simulations*2,ncol=4)
+  pb_list = list()
+  
+  for (alpha in alpha_seq){
+    pb_list[[as.character(alpha)]]=matrix(0,nrow=n_simulations*2,ncol=5)
+  }
+  
+  idx=1
+  
+  for (file in list.files('../results/processed/')){
+    
+    results = readRDS(paste0('../results/processed/',file))
+    
+    cde_mean = results$cdeloss$mean
+    cde_se   = results$cdeloss$se
+    cde_info = rbind(cde_mean,cde_se)
+    cde_table[(2*idx-1):(2*idx),] = cde_info
+    
+    for (i in 1:length(alpha_seq)){
+      
+      pb_mean_i = results$pbloss$mean[1,2:6]
+      pb_se_i   = results$pbloss$se[1,2:6]
+      pb_info_i = rbind(pb_mean_i,pb_se_i)
+      pb_list[[i]][(2*idx-1):(2*idx),] = pb_info_i
+      
+    }
+    
+    idx = idx+1
+    
+  }
+  
+  tables= list()
+  tables[['cdeloss']] = cde_table
+  
+  k=1
+  for (alpha in alpha_seq){
+    tables[[as.character(alpha)]] = pb_list[[k]]
+    k = k+1
+  }
+  
+  return(tables)
+  
+}

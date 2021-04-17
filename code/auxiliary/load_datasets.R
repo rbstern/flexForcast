@@ -91,8 +91,8 @@ create_train_valid_test_sets = function(dataset,p_valid,p_test,lags=0,remove=0){
     # you want to add lags as covariates
     if (lags > 0){
 
-      n_train = ceiling((1-p_test-p_valid)*(nrow(dataset)-lags))
-      n_valid = ceiling(p_valid*(nrow(dataset)-lags))
+      n_train = ceiling((1-p_test-p_valid)*(nrow(dataset)))
+      n_valid = ceiling(p_valid*(nrow(dataset)))
 
       ytrain=dataset[(lags+1):(lags+n_train),]
       yvalid = dataset[(lags+n_train+1):(lags+n_train+n_valid),]
