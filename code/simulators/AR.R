@@ -45,6 +45,10 @@ ar_simulator_time_varying_variance = function(n_obs, coeffs)
   return(data)
 }
 
+#################################################################
+
+print('constant variance')
+
 for (n_obs in n_obs_list) {
   
   this_simulator = partial(ar_simulator,n_obs=n_obs,param=param)

@@ -47,6 +47,10 @@ bernoulli_simulator_time_varying_variance = function(p_bernoulli,ar_param,n_obs)
   return(data)
 }
 
+##########################################################
+
+print('constant variance')
+
 for (n_obs in n_obs_list) {
   
   this_simulator = partial(bernoulli_simulator,

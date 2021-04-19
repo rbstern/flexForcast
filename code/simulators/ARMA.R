@@ -55,6 +55,9 @@ arma_simulator_time_varying_variance = function(n_obs, ar_coeffs,ma_coeffs)
   return(data)
 }
 
+##########################################################
+
+print('constant variance')
 
 for (n_obs in n_obs_list) {
   
