@@ -63,22 +63,39 @@ read_quantile_loss <- function(arqs)
                                  rbind(xx$pbloss$mean,xx$pbloss$se)))
              })) %>% 
     unnest()
+
+}
+
+all_tables <- function(arqs,n)
+{
+  arqs_subset <- arqs %>% 
+    str_subset(.,as.character(n))
+  data_cde <- arqs_subset %>% 
+    read_cde_loss() %>% 
+    convert_to_mean_se()
+  data_quantile <- arqs_subset %>% 
+    read_quantile_loss() %>% 
+    convert_to_mean_se()
+  
+  
+  
+  kbl(data_quantile, booktabs = T,"latex", align = "c", linesep = '') %>%
+    collapse_rows(1:2, row_group_label_position = 'stack')%>% 
+    kable_styling(font_size = 7) %>% 
+    print()
+  
+  kbl(data_cde, booktabs = T,"latex", align = "c", linesep = '') %>%
+    #collapse_rows(1:2, row_group_label_position = 'stack')%>% 
+    kable_styling(font_size = 7)%>% 
+    print()
+  
+  
 }
 
 decimal <- 3
 
 folder_files <- "../results/processed/"
 arqs <- list.files(folder_files,full.names=TRUE)
+all_tables(arqs,1000)
+all_tables(arqs,5000)
 
-n <- 1000
-arqs_subset <- arqs %>% 
-  str_subset(.,as.character(n))
-data_cde <- arqs_subset %>% 
-  read_cde_loss() %>% 
-  convert_to_mean_se()
-data_quantile <- arqs_subset %>% 
-  read_quantile_loss() %>% 
-  convert_to_mean_se()
-
-kbl(data_quantile[1:10,], booktabs = T,"latex", align = "c", linesep = '') %>%
-  collapse_rows(1:2, row_group_label_position = 'stack')
