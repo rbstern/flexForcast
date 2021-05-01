@@ -12,7 +12,7 @@ cubic.sim = function(n){
     
     error_t = rnorm(1,0,0.5)
     lag = points[length(points)]
-
+    
     if (lag > 1){
       new_point = 1
     } else if (lag < -1){
