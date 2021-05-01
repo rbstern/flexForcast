@@ -11,14 +11,14 @@ cubic.sim = function(n){
   for (i in 1:n){
     
     error_t = rnorm(1,0,0.5)
-    new_point = 0.5*(points[length(points)])^3+error_t
-    
-    if (new_point > 1){
+    lag = points[length(points)]
+
+    if (lag > 1){
       new_point = 1
-    } else if (new_point < -1){
+    } else if (lag < -1){
       new_point = -1
     } else {
-      new_point = new_point
+      new_point = 0.5*lag^3+error_t
     }
     
     points = c(points,new_point)

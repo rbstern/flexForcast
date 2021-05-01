@@ -1,6 +1,3 @@
-# cleans environment
-rm(list = ls())
-
 # import libraries
 library(rlang)
 library(tidyverse)
