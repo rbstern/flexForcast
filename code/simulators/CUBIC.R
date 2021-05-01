@@ -1,9 +1,8 @@
 n_iter=100
-ar_param = 0.80
 n_obs_list = c(1000,5000)
 lags=1
 
-sine_ar.sim = function(n){
+cubic.sim = function(n){
   
   #initial data point is distributed N(0,1)
   points = rnorm(1,0,1)
@@ -12,7 +11,16 @@ sine_ar.sim = function(n){
   for (i in 1:n){
     
     error_t = rnorm(1,0,0.5)
-    new_point = 0.5*sin(points[length(points)])+error_t
+    new_point = 0.5*(points[length(points)])^3+error_t
+    
+    if (new_point > 1){
+      new_point = 1
+    } else if (new_point < -1){
+      new_point = -1
+    } else {
+      new_point = new_point
+    }
+    
     points = c(points,new_point)
   }
   
@@ -20,9 +28,10 @@ sine_ar.sim = function(n){
   return(points)
 }
 
-sine_ar_simulator = function(n_obs)
+
+cubic_simulator = function(n_obs)
 {
-  data = sine_ar.sim(n_obs)
+  data = cubic.sim(n_obs)
   data <- as.data.frame(data)
   colnames(data) = "y"
   return(data)
@@ -31,18 +40,17 @@ sine_ar_simulator = function(n_obs)
 
 for (n_obs in n_obs_list) {
   
-  this_simulator = partial(sine_ar_simulator,
+  this_simulator = partial(cubic_simulator,
                            n_obs=n_obs)
   this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter)
   
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss
   
-  write_rds(this_pbloss, paste0("../results/PBLOSS_SINE_AR_",n_obs,"obs.rds"))
-  write_rds(this_cdeloss, paste0("../results/CDELOSS_SINE_AR_",n_obs,"obs.rds"))
+  write_rds(this_pbloss, paste0("../results/PBLOSS_CUBIC_AR_",n_obs,"obs.rds"))
+  write_rds(this_cdeloss, paste0("../results/CDELOSS_CUBIC_AR_",n_obs,"obs.rds"))
   
   processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
-  write_rds(processed_loss,paste0("../results/processed/SINE_AR_",n_obs,"obs.rds"))
+  write_rds(processed_loss,paste0("../results/processed/CUBIC_AR_",n_obs,"obs.rds"))
   
 }
-
