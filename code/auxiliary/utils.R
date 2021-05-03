@@ -91,7 +91,7 @@ process_loss_outputs = function(pbloss,cdeloss){
   
   pbloss_mean = apply(pbloss_array, c(1,2), mean)
   pbloss_mean = cbind(quantile=alpha_seq,pbloss_mean)
-  colnames(pbloss_mean)[2:6] = c('QAR','NNKCDE','FLEX_RF','FLEX_XGB','GARCH')
+  colnames(pbloss_mean)[2:6] = c('QAR','NNKCDE','GARCH','FLEX_RF','FLEX_XGB')
   
   pbloss_se  = apply(pbloss_array, c(1,2), sd)
   pbloss_se = pbloss_se/sqrt(n_iter)
