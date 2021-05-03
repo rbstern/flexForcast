@@ -96,7 +96,7 @@ process_loss_outputs = function(pbloss,cdeloss){
   pbloss_se  = apply(pbloss_array, c(1,2), sd)
   pbloss_se = pbloss_se/sqrt(n_iter)
   pbloss_se = cbind(quantile=alpha_seq,pbloss_se)
-  colnames(pbloss_se)[2:6] = c('QAR','NNKCDE','FLEX_RF','FLEX_XGB','GARCH')
+  colnames(pbloss_se)[2:6] = c('QAR','NNKCDE','GARCH','FLEX_RF','FLEX_XGB')
   
   pb = list(mean=pbloss_mean,se=pbloss_se)
   
@@ -106,9 +106,9 @@ process_loss_outputs = function(pbloss,cdeloss){
   cdeloss_se = cdeloss_se/sqrt(n_iter)
   
   cdeloss_mean = matrix(cdeloss_mean,nrow = 1, ncol = 4)
-  colnames(cdeloss_mean)=c('NNKCDE','FLEX_RF','FLEX_XGB','GARCH')
+  colnames(cdeloss_mean)=c('NNKCDE','GARCH','FLEX_RF','FLEX_XGB')
   cdeloss_se = matrix(cdeloss_se,nrow = 1, ncol = 4)
-  colnames(cdeloss_se)=c('NNKCDE','FLEX_RF','FLEX_XGB','GARCH')
+  colnames(cdeloss_se)=c('NNKCDE','GARCH','FLEX_RF','FLEX_XGB')
   
   cd = list(mean=cdeloss_mean,se=cdeloss_se)
   
@@ -170,3 +170,5 @@ final_loss_comparations = function(alpha_seq){
   return(tables)
   
 }
+
+for ()
