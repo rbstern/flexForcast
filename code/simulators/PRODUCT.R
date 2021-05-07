@@ -1,6 +1,6 @@
 n_iter=100
 n_obs_list = c(1000,5000)
-lags=1
+lags=2
 product.sim = function(n){
   
   #initial data point is distributed N(0,1)

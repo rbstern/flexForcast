@@ -171,4 +171,3 @@ final_loss_comparations = function(alpha_seq){
   
 }
 
-for ()

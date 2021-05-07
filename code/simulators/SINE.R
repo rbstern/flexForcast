@@ -7,12 +7,12 @@ sine_ar.sim = function(n){
   
   #initial data point is distributed N(0,1)
   points = rnorm(1,0,1)
+  sd <- 0.25
   
   # we will generate (n+order) points so as to remove the first (order) points
   for (i in 1:n){
-    
-    error_t = rnorm(1,0,0.5)
-    new_point = 0.5*sin(points[length(points)])+error_t
+    error_t = rnorm(1,0,sd)
+    new_point = sin(pi*points[length(points)])^2+error_t
     points = c(points,new_point)
   }
   
@@ -46,3 +46,16 @@ for (n_obs in n_obs_list) {
   
 }
 
+#############################################################################
+
+n_obs=1000
+cdelosses = list()
+
+for (lags in c(1,3,5,10,15)){
+  
+  this_simulator = partial(sine_ar_simulator,n_obs=n_obs)
+  this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter, mini=TRUE)
+  this_cdeloss = this_loss$cdeloss
+  cdelosses[[as.character(lags)]]=this_cdeloss
+  
+}

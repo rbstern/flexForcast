@@ -42,8 +42,8 @@ test_methods_mini = function(train_valid_test_sets,alpha_seq,lags,params){
   
   flexcode_rf   = partial(flexcode_training,p_train=p_train,regressionFunction=regressionFunction.Forest,lags_y=lags,n_cores=n_cores_flexcode)
   
-  methods = list(garch_training,flexcode_rf)
-  nomes = c("GARCH","FLEX-RF")
+  methods = list(garch_training,nnkcde_training,flexcode_rf)
+  nomes = c("GARCH","NNK-CDE","FLEX-RF")
   
   pb_losses = c()
   cde_losses = c()
