@@ -51,7 +51,7 @@ for (n_obs in n_obs_list) {
 n_obs=1000
 cdelosses = list()
 
-for (lags in c(1,3,5,10,15)){
+for (lags in c(1,3,5,10,15,20,25,50,100)){
   
   this_simulator = partial(sine_ar_simulator,n_obs=n_obs)
   this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter, mini=TRUE)
@@ -59,3 +59,32 @@ for (lags in c(1,3,5,10,15)){
   cdelosses[[as.character(lags)]]=this_cdeloss
   
 }
+
+df = matrix(nrow=9,ncol=3)
+for (i in 1:9){
+  losses_i=colMeans(cdelosses[[i]])
+  df[i,]=losses_i
+}
+colnames(df)=c("GARCH","NNK-CDE","FLEX-RF")
+df=as.data.frame(df)
+
+lmax = max(df)
+lmin = min(df)
+d = lmax-lmin
+
+plot(c(1,3,5,10,15,20,25,50,100),df$GARCH,type='b',bty="l",xlab="No. of Lags",ylab="CDE loss",ylim=c(lmin-0.1*d,1),col=rgb(0.2,0.4,0.1,0.7) , lwd=3 , pch=17, xaxt="none")
+lines(c(1,3,5,10,15,20,25,50,100),df$`NNK-CDE`,type="b",col=rgb(0.8,0.4,0.1,0.7) , lwd=3 , pch=19)
+lines(c(1,3,5,10,15,20,25,50,100),df$`FLEX-RF`,type="b",col=rgb(0.8,0.7,0.1,0.7) , lwd=3 , pch=15)
+axis(1, c(1,3,5,10,15,20,25,50,100),las=2, cex.axis=0.8, font=2)
+legend("right", 
+       legend = c("GARCH","NNK-CDE","FLEX-RF"), 
+       col = c(rgb(0.2,0.4,0.1,0.7), 
+               rgb(0.8,0.4,0.1,0.7),
+               rgb(0.8,0.7,0.1,0.7)), 
+       pch = c(17,19,15), 
+       bty = "n", 
+       pt.cex = 1.5, 
+       cex = 0.6, 
+       text.col = "black", 
+       horiz = F , 
+       inset = c(0.1, 0.1))
