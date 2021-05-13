@@ -1,6 +1,6 @@
 n_iter=100
 coeffs=c(0.2,0.3,0.35)
-n_obs_list = c(1000,5000)
+n_obs_list = c(2500,10000)
 lags=length(coeffs)
 
 ar.sim = function(coeffs,n,df=3,var=FALSE){
@@ -85,14 +85,14 @@ for (n_obs in n_obs_list) {
 
 #####################################################################################
 
-n_obs=1000
-cdelosses = list()
-
-for (lags in c(1,3,5,10,15)){
-  
-  this_simulator = partial(ar_simulator,n_obs=n_obs,coeffs=coeffs)
-  this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter, mini=TRUE)
-  this_cdeloss = this_loss$cdeloss
-  cdelosses[[as.character(lags)]]=this_cdeloss
-  
-}
+# n_obs=1000
+# cdelosses = list()
+# 
+# for (lags in c(1,3,5,10,15)){
+#   
+#   this_simulator = partial(ar_simulator,n_obs=n_obs,coeffs=coeffs)
+#   this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter, mini=TRUE)
+#   this_cdeloss = this_loss$cdeloss
+#   cdelosses[[as.character(lags)]]=this_cdeloss
+#   
+# }

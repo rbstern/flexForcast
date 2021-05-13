@@ -1,5 +1,5 @@
 coeffs=c(0.38,0.4,0.21)
-n_obs_list = c(1000,5000)
+n_obs_list = c(2500,10000)
 n_iter=100
 lags=length(coeffs)
 

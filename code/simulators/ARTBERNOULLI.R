@@ -1,7 +1,7 @@
 n_iter=100
 p_bernoulli = 0.85
 ar_param = 0.80
-n_obs_list = c(1000,5000)
+n_obs_list = c(2500,10000)
 lags=1
 
 bernoulli_art.sim = function(p_bernoulli,ar_param,n,df=3){

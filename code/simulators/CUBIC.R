@@ -1,5 +1,5 @@
 n_iter=100
-n_obs_list = c(1000,5000)
+n_obs_list = c(2500,10000)
 lags=1
 
 cubic.sim = function(n){

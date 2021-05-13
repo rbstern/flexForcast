@@ -2,7 +2,7 @@ c=0.1
 ar=0.9
 std=0.05
 jump_prob=0.05
-n_obs_list=c(1000,5000)
+n_obs_list=c(2500,10000)
 n_iter=100
 lags=1
 
@@ -53,11 +53,6 @@ armajump_simulator = function(n_obs, c, ar, std, jump_prob)
 # }
 
 for (n_obs in n_obs_list) {
-  
-  #data <- read.csv(paste0('../data/arma_jump_simulations_',n_obs,'obs.csv'))
-  
-  #this_armajump_simulator = partial(armajump_simulator,n_obs=n_obs,data=data)
-  #this_loss = simulation_run(this_armajump_simulator, n_iter = n_iter, read=TRUE)
   
   this_simulator = partial(armajump_simulator, n_obs=n_obs,
                             c=c, ar=ar, std=std, jump_prob=jump_prob)
