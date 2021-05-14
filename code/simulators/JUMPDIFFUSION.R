@@ -4,8 +4,8 @@ lags_garch=1
 
 jumpdiffusion_simulator = function(n_obs, data, k){
   
-  if (n_obs!=1000 & n_obs!=5000){
-    stop('For this simulation, it is only possible to choose 1000 or 5000 observations.')
+  if (n_obs!=1000 & n_obs!=2500 & n_obs!=5000 & n_obs!=10000){
+    stop('For this simulation, it is only possible to choose 1000, 2500, 5000 or 10000 observations.')
   }
   
   this_data=data[(n_obs*(k-1)+1):(n_obs*k),2:5]
