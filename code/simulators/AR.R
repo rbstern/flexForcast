@@ -51,7 +51,7 @@ print('constant variance')
 
 for (n_obs in n_obs_list) {
   
-  this_simulator = partial(ar_simulator,n_obs=n_obs,param=param)
+  this_simulator = partial(ar_simulator,n_obs=n_obs,coeffs=coeffs)
   this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter)
   
   this_pbloss  = this_loss$pbloss
