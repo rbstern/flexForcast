@@ -1,52 +1,32 @@
-GARCH.run=function(ytrain,yeval,ytest,alpha_seq,lags=1,xtrain=NULL,xeval=NULL,xtest=NULL,armaOrder,garchOrder){
+
+
+GARCH.run=function(ytrain,yeval,ytest,alpha_seq,lags){
   
   try({
+    model.garch = ugarchspec(mean.model=list(armaOrder=c(lags,lags)),
+                             variance.model=list(garchOrder=c(lags,lags)),
+                             distribution.model = "std")
     
-    if (sum(!grepl("lag",colnames(xtrain)))>0) {
-      model.garch = ugarchspec(mean.model=list(armaOrder=c(2,2),external.regressors = as.matrix(rbind(Xtrain,Xvalid))),
-                               variance.model=list(garchOrder=c(2,2)),
-                               distribution.model = "std")
-      
-      
-      model.garch.fit = ugarchfit(data=c(ytrain,yvalid,ytest), spec=model.garch,  solver = 'hybrid' ,out.sample = length(ytest))
-      modelfor=ugarchforecast(model.garch.fit, data = ytest, n.ahead = 1,n.roll = length(ytest),external.forecasts = Xtest)
-      
-      quantiles_list = list()
-      #pred=modelfor@forecast$seriesFor[1,1:length(ytest)]
-      
-      for (ii in 1:length(alpha_seq)){
-        q_garch_ii = qnorm(alpha_seq[ii],
-                           mean=modelfor@forecast$seriesFor[1,1:length(ytest)],
-                           sd=modelfor@forecast$sigmaFor[1,1:length(ytest)])
-        quantiles_list[[ii]]=q_garch_ii
-        
-      }
-    } else {
-      
-      model.garch = ugarchspec(mean.model=list(armaOrder=c(lags,lags)),
-                               variance.model=list(garchOrder=c(lags,lags)),
-                               distribution.model = "std")
-      
-      
-      model.garch.fit = ugarchfit(data=c(ytrain,yeval,ytest), spec=model.garch,  solver = 'hybrid' ,out.sample = length(ytest))
-      modelfor=ugarchforecast(model.garch.fit, data = ytest, n.ahead = 1,n.roll = length(ytest))
-      
-      quantiles_list = list()
-      pred=modelfor@forecast$seriesFor[1,1:length(ytest)]
-      
-      for (ii in 1:length(alpha_seq)){
-        q_garch_ii = qnorm(alpha_seq[ii],
-                           mean=modelfor@forecast$seriesFor[1,1:length(ytest)],
-                           sd=modelfor@forecast$sigmaFor[1,1:length(ytest)])
-        quantiles_list[[ii]]=q_garch_ii
-      }
-      
+
+    
+    model.garch.fit = ugarchfit(data=c(ytrain,yeval,ytest), spec=model.garch,  solver = 'hybrid' ,out.sample = length(ytest))
+    modelfor=ugarchforecast(model.garch.fit, data = ytest, n.ahead = 1,n.roll = length(ytest))
+    print(2)
+    quantiles_list = list()
+    pred=modelfor@forecast$seriesFor[1,1:length(ytest)]
+    
+    for (ii in 1:length(alpha_seq)){
+      q_garch_ii = qnorm(alpha_seq[ii],
+                         mean=modelfor@forecast$seriesFor[1,1:length(ytest)],
+                         sd=modelfor@forecast$sigmaFor[1,1:length(ytest)])
+      quantiles_list[[ii]]=q_garch_ii
     }
-  },silent = TRUE)
-  
-  if (!exists("modelfor")) {
     
-    fit=auto.arima(c(ytrain,yeval))
+  }
+,silent = TRUE)
+  if (!exists("modelfor")) {
+
+    fit=auto.arima(c(ytrain,yeval),max.p = lags,max.q =lags)
     fit2=Arima(ytest,model=fit)
     
     quantiles_list = list()
@@ -76,9 +56,7 @@ GARCH.run=function(ytrain,yeval,ytest,alpha_seq,lags=1,xtrain=NULL,xeval=NULL,xt
   } else{
     return(list(df_quantiles=df_quantiles,garch_model = fit2,z_grid=z_grid,convergence_garch=convergence_garch))
   }
-}
-
-
+  }
 
 GARCH.pinball_loss = function(garch_output,ytest,alpha_seq){
   
@@ -123,12 +101,12 @@ GARCH.cde_estimate = function(garch_output,ytest){
   return(cdes)
 }
 
-garch_training = function(train_valid_test_sets,alpha_seq)
+garch_training = function(train_valid_test_sets,alpha_seq,lags)
 {
   ytrain=train_valid_test_sets$ytrain
   yvalid=train_valid_test_sets$yvalid
   ytest=train_valid_test_sets$ytest
-  garch_output = GARCH.run(ytrain,yvalid,ytest,alpha_seq)
+  garch_output = GARCH.run(ytrain,yvalid,ytest,alpha_seq,lags)
   cdes = GARCH.cde_estimate(garch_output,ytest)
   
   cde_loss_garch = cdeloss(ytest,garch_output$z_grid,cdes)
@@ -136,5 +114,4 @@ garch_training = function(train_valid_test_sets,alpha_seq)
   
   list(cdeloss = cde_loss_garch, pbloss = garch_loss)
 }
-
 
