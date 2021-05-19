@@ -234,8 +234,9 @@ plots_paper <- function(arqs,which_quantiles,which_settings,methods_remove)
   data_all <- full_join(data_cde,data_quantile)
   
   data_all$setting <- recode(data_all$setting, 
-                             SINE_AR_obs = "SINE", 
+                             SINE_AR_obs = "NONLINEAR MEAN", 
                              AR__obs = "AR",
+                             AR_NONLINEAR_VAR_obs = "NONLINEAR VARIANCE",
                              ARMA__obs="ARMA",
                              ARMAJUMP_obs="ARMA JUMP",
                              ARMATJUMP_obs="ARMA JUMP T",
@@ -245,7 +246,7 @@ plots_paper <- function(arqs,which_quantiles,which_settings,methods_remove)
                               "0.5"="Pinball loss (50%)",
                               "0.8"="Pinball loss (80%)",
                               "0.95"="Pinball loss (95%)",
-                              "CDE loss"="CDE")
+                              "CDE"="CDE loss")
   
   settings <- unique(data_all$setting)
   plots <- list()
@@ -298,7 +299,7 @@ plots_paper <- function(arqs,which_quantiles,which_settings,methods_remove)
 
 decimal <- 3
 which_quantiles <- c(0.5,0.8,0.95)
-which_settings<- c("^AR_1","^ARMA_11",
+which_settings<- c("^AR_3","^AR_NONLINEAR",
                    "^ARMAJUMP","^ARMATJUMP",
                    "^JUMPDIFFUSION","^SINE")
 methods_remove <- "XGB"
