@@ -91,12 +91,14 @@ process_loss_outputs = function(pbloss,cdeloss){
   
   pbloss_mean = apply(pbloss_array, c(1,2), mean)
   pbloss_mean = cbind(quantile=alpha_seq,pbloss_mean)
-  colnames(pbloss_mean)[2:6] = c('QAR','NNKCDE','GARCH','FLEX_RF','FLEX_XGB')
+  #colnames(pbloss_mean)[2:6] = c('QAR','NNKCDE','GARCH','FLEX_RF','FLEX_XGB')
+  colnames(pbloss_mean)[2:5] = c('QAR','NNKCDE','GARCH','FLEX_RF')
   
   pbloss_se  = apply(pbloss_array, c(1,2), sd)
   pbloss_se = pbloss_se/sqrt(n_iter)
   pbloss_se = cbind(quantile=alpha_seq,pbloss_se)
-  colnames(pbloss_se)[2:6] = c('QAR','NNKCDE','GARCH','FLEX_RF','FLEX_XGB')
+  #colnames(pbloss_se)[2:6] = c('QAR','NNKCDE','GARCH','FLEX_RF','FLEX_XGB')
+  colnames(pbloss_se)[2:5] = c('QAR','NNKCDE','GARCH','FLEX_RF')
   
   pb = list(mean=pbloss_mean,se=pbloss_se)
   
@@ -105,10 +107,12 @@ process_loss_outputs = function(pbloss,cdeloss){
   cdeloss_se = apply(cdeloss, 2, sd)
   cdeloss_se = cdeloss_se/sqrt(n_iter)
   
-  cdeloss_mean = matrix(cdeloss_mean,nrow = 1, ncol = 4)
-  colnames(cdeloss_mean)=c('NNKCDE','GARCH','FLEX_RF','FLEX_XGB')
-  cdeloss_se = matrix(cdeloss_se,nrow = 1, ncol = 4)
-  colnames(cdeloss_se)=c('NNKCDE','GARCH','FLEX_RF','FLEX_XGB')
+  #cdeloss_mean = matrix(cdeloss_mean,nrow = 1, ncol = 4)
+  cdeloss_mean = matrix(cdeloss_mean,nrow = 1, ncol = 3)
+  colnames(cdeloss_mean)=c('NNKCDE','GARCH','FLEX_RF')#,'FLEX_XGB')
+  #cdeloss_se = matrix(cdeloss_se,nrow = 1, ncol = 4)
+  cdeloss_se = matrix(cdeloss_se,nrow = 1, ncol = 3)
+  colnames(cdeloss_se)=c('NNKCDE','GARCH','FLEX_RF')#,'FLEX_XGB')
   
   cd = list(mean=cdeloss_mean,se=cdeloss_se)
   

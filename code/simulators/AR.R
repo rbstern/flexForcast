@@ -66,22 +66,22 @@ for (n_obs in n_obs_list) {
 
 ###################################################################################
 
-print('time varying variance AR')
-
-for (n_obs in n_obs_list) {
-  
-  this_simulator = partial(ar_simulator_time_varying_variance,n_obs=n_obs,coeffs=coeffs)
-  this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter)
-  
-  this_pbloss  = this_loss$pbloss
-  this_cdeloss = this_loss$cdeloss
-  
-  write_rds(this_pbloss, paste0("../results/full/PBLOSS_AR_3_TIMEVARYING_",n_obs,"obs.rds"))
-  write_rds(this_pbloss, paste0("../results/full/CDELOSS_AR_3_TIMEVARYING_",n_obs,"obs.rds"))
-  
-  processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
-  write_rds(processed_loss,paste0("../results/processed/AR_3_TIMEVARYING_",n_obs,"obs.rds"))
-}
+# print('time varying variance AR')
+# 
+# for (n_obs in n_obs_list) {
+#   
+#   this_simulator = partial(ar_simulator_time_varying_variance,n_obs=n_obs,coeffs=coeffs)
+#   this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter)
+#   
+#   this_pbloss  = this_loss$pbloss
+#   this_cdeloss = this_loss$cdeloss
+#   
+#   write_rds(this_pbloss, paste0("../results/full/PBLOSS_AR_3_TIMEVARYING_",n_obs,"obs.rds"))
+#   write_rds(this_pbloss, paste0("../results/full/CDELOSS_AR_3_TIMEVARYING_",n_obs,"obs.rds"))
+#   
+#   processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
+#   write_rds(processed_loss,paste0("../results/processed/AR_3_TIMEVARYING_",n_obs,"obs.rds"))
+# }
 
 #####################################################################################
 

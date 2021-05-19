@@ -15,18 +15,24 @@ NNKCDE.train = function(train_valid_test_sets,alpha_seq){
   Xtest=train_valid_test_sets$Xtest
   
   ## Train
-  obj <- NNKCDE$new(Xtrain, ytrain, h = 0.15)
+  obj <- NNKCDE$new(Xtrain, ytrain)
+
+  # create h-grid
+  dist = outer(ytrain,ytrain, `-`)
+  dist = dist[lower.tri(dist)]
+  dist = as.vector(dist)
+  dist = abs(dist[!is.na(dist)])
+  dist = sort(dist)
   
-  ## Estimate errors
-  k_grid <- 1:10
-  loss_list <- obj$estimate_loss(Xvalid, yvalid, k_grid = k_grid)
+  len = length(dist)
+  idx1 = round(0.01*len)
+  idx2 = round(0.5*len)
+  h_grid = seq(dist[idx1],dist[idx2],length=20)
+  
+  k_grid <- seq(1, 101, 5) #len=21
   
   ## Tune to minimum loss
-  obj$tune(Xvalid, yvalid, k_grid = seq(1, 20, 100))
-  
-  ###############
-  ## CONFIRMAR ##  
-  ###############
+  obj$tune(Xvalid, yvalid, k_grid = k_grid, h_grid = h_grid)
   
   n_grid = 1000
   minimo = min(ytrain) # ytrain ? correto?
