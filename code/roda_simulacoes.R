@@ -1,4 +1,4 @@
-setwd("~/flexForcast/code")
+#setwd("~/flexForcast/code")
 source("./set_environment.R")
 
 ####################################################
@@ -13,5 +13,6 @@ source('./simulators/JUMPDIFFUSION.R')
 #source('./simulators/ARTBERNOULLI.R')
 source('./simulators/ARMAT.R')
 source('./simulators/SINE.R')
+source('./simulators/AR_NONLINEARVAR.R')
 #source('./simulators/CUBIC.R')
 #source('./simulators/PRODUCT.R')

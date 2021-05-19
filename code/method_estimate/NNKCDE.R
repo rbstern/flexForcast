@@ -29,7 +29,7 @@ NNKCDE.train = function(train_valid_test_sets,alpha_seq){
   idx2 = round(0.5*len)
   h_grid = seq(dist[idx1],dist[idx2],length=20)
   
-  k_grid <- seq(1, 101, 5) #len=21
+  k_grid <- round(seq(1, 201, 10)) #len=21
   
   ## Tune to minimum loss
   obj$tune(Xvalid, yvalid, k_grid = k_grid, h_grid = h_grid)
