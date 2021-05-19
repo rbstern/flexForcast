@@ -2,7 +2,7 @@ c=0.1
 ar=0.9
 std=0.05
 jump_prob=0.05
-n_obs_list=c(2500,10000)
+n_obs_list = c(1000,2500,5000,10000)
 n_iter=100
 lags=1
 
@@ -66,4 +66,6 @@ for (n_obs in n_obs_list) {
   
   processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
   write_rds(processed_loss,paste0("../results/processed/ARMAJUMP_",n_obs,"obs.rds"))
+  
+  gc()
 }

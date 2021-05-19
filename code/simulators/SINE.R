@@ -1,6 +1,6 @@
 n_iter=100
 ar_param = 0.80
-n_obs_list = c(2500,10000)
+n_obs_list = c(1000,2500,5000,10000)
 lags=1
 
 sine_ar.sim = function(n){
@@ -43,7 +43,7 @@ for (n_obs in n_obs_list) {
   
   processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
   write_rds(processed_loss,paste0("../results/processed/SINE_AR_",n_obs,"obs.rds"))
-  
+  gc()
 }
 
 #############################################################################
