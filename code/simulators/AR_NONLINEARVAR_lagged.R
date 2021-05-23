@@ -21,7 +21,7 @@ sine_ar.sim = function(n){
     points = c(points,new_point)
   }
   
-  points = points[2:length(points)]
+  points = points[3:length(points)]
   return(points)
 }
 
