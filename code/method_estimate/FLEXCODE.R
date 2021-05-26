@@ -1,13 +1,19 @@
 flexcode_training = function(train_valid_test_sets,alpha_seq,p_train,
-                             regressionFunction,lags_y, n_cores=1,
+                             regressionFunction,lags_y=0, n_cores=1,
                              lags_x=0,nIMax=50,chooseSharpen=TRUE)
 {
   
   ytrain=train_valid_test_sets$ytrain
+  yvalid=train_valid_test_sets$yvalid
   ytest=train_valid_test_sets$ytest
   
+  ytrain = c(ytrain,yvalid)
+  
   Xtrain=train_valid_test_sets$Xtrain
+  Xvalid=train_valid_test_sets$Xvalid
   Xtest=train_valid_test_sets$Xtest
+  
+  Xtrain = rbind(Xtrain,Xvalid)
   
   if (is.null(nrow(Xtrain))) {
     Xtrain=matrix(Xtrain)
