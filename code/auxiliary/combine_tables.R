@@ -302,7 +302,7 @@ which_quantiles <- c(0.5,0.8,0.95)
 which_settings<- c("^AR_3","^AR_NONLINEAR",
                    "^ARMAJUMP","^ARMATJUMP",
                    "^JUMPDIFFUSION","^SINE")
-methods_remove <- "XGB"
+methods_remove <- NULL
 folder_files <- "../results/processed/"
 arqs <- list.files(folder_files,full.names=TRUE)
 

@@ -1,6 +1,8 @@
-n_iter=100
+n_iter=2
+#n_iter=100
 ar_param = 0.80
-n_obs_list = c(1000,2500,5000,10000)
+#n_obs_list = c(1000,2500,5000,10000)
+n_obs_list = c(1000,2000)
 lags=2
 
 sine_ar.sim = function(n){
