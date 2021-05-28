@@ -13,12 +13,18 @@ flexcode_training = function(train_valid_test_sets,alpha_seq,p_train,
   Xvalid=train_valid_test_sets$Xvalid
   Xtest=train_valid_test_sets$Xtest
   
-  Xtrain = rbind(Xtrain,Xvalid)
+  if (is.null(ncol(Xtrain))){
+    Xtrain = c(Xtrain,Xvalid)
+  } else {
+    Xtrain = rbind(Xtrain,Xvalid)
+  }
+  
   
   if (is.null(nrow(Xtrain))) {
     Xtrain=matrix(Xtrain)
     Xtest=matrix(Xtest)
   }
+  
   
   fit <- fit_flexcode_timeseries(X=Xtrain,y=ytrain,
                                  lags_x=lags_x,

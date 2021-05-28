@@ -75,6 +75,9 @@ fit_flexcode_timeseries <-function(X=NULL,y,lags_x=NULL,
   X_design <- X_design[which_complete,]
   y <- y[which_complete]
 
+  if (is.null(ncol(X_design))){
+    X_design = matrix(X_design,ncol=1)
+  }
 
   #  random_index <- sample(1:length(y),
   #                         size = length(y),
