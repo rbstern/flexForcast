@@ -1,6 +1,6 @@
 n_iter=100
 coeffs=c(0.2,0.3,0.35)
-n_obs_list = c(1000,2500,5000,10000)
+n_obs_list = c(1000,2500,5000)
 lags=length(coeffs)
 
 ar.sim = function(coeffs,n,df=3,var=FALSE){
