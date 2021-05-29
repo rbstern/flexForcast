@@ -2,7 +2,7 @@ c=0.1
 ar=0.9
 std=0.05
 jump_prob=0.05
-n_obs_list = c(1000,2500,5000,10000)
+n_obs_list = c(1000,2500,5000)
 n_iter=100
 lags=1
 
