@@ -1,4 +1,4 @@
-n_obs_list = c(1000,2500,5000,10000)
+n_obs_list = c(1000,2500,5000)
 n_iter=100
 lags_garch=1
 
