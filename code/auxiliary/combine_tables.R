@@ -49,6 +49,7 @@ read_cde_loss <- function(arqs)
                                  rbind(xx$cdeloss$mean,xx$cdeloss$se)))
              })) %>% 
     unnest()
+  
 }
 
 
@@ -301,7 +302,8 @@ decimal <- 3
 which_quantiles <- c(0.5,0.8,0.95)
 which_settings<- c("^AR_3","^AR_NONLINEAR",
                    "^ARMAJUMP","^ARMATJUMP",
-                   "^JUMPDIFFUSION","^SINE")
+                   "^JUMPDIFFUSION",
+                   "^SINE")
 methods_remove <- NULL
 folder_files <- "../results/processed/"
 arqs <- list.files(folder_files,full.names=TRUE)

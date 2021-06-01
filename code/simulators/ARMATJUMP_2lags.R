@@ -8,7 +8,7 @@ n_iter=100
 lags=2
 
 
-armajump.sim = function(n_obs, c, ar1, ar2, std, jump_prob)
+armatjump.sim = function(n_obs, c, ar1, ar2, std, jump_prob,df=3)
 {
   
   #initial data points is distributed N(0,1)
@@ -18,7 +18,7 @@ armajump.sim = function(n_obs, c, ar1, ar2, std, jump_prob)
   for (i in 1:n_obs){
     
     # error is N(0,1) distributed
-    error_t = rnorm(1,0,1)
+    error_t = rt(1,df)
     lag1 = points[length(points)]
     lag2 = points[length(points)-1]
     z_t = rbinom(1,1,jump_prob)
@@ -32,9 +32,9 @@ armajump.sim = function(n_obs, c, ar1, ar2, std, jump_prob)
 }
 
 
-armajump_simulator = function(n_obs, c, ar1, ar2, std, jump_prob)
+armatjump_simulator = function(n_obs, c, ar1, ar2, std, jump_prob)
 {
-  data = armajump.sim(n_obs, c, ar1, ar2, std, jump_prob)
+  data = armatjump.sim(n_obs, c, ar1, ar2, std, jump_prob)
   data <- as.data.frame(data)
   colnames(data) = "y"
   return(data)
@@ -56,18 +56,18 @@ armajump_simulator = function(n_obs, c, ar1, ar2, std, jump_prob)
 
 for (n_obs in n_obs_list) {
   
-  this_simulator = partial(armajump_simulator, n_obs=n_obs, c=c,
+  this_simulator = partial(armatjump_simulator, n_obs=n_obs, c=c,
                            ar1=ar1, ar2=ar2, std=std, jump_prob=jump_prob)
   this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter)
   
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss
   
-  write_rds(this_pbloss, paste0("../results/PBLOSS_ARMAJUMP2_",n_obs,"obs.rds"))
-  write_rds(this_pbloss, paste0("../results/CDELOSS_ARMAJUMP2_",n_obs,"obs.rds"))
+  write_rds(this_pbloss, paste0("../results/PBLOSS_ARMATJUMP2_",n_obs,"obs.rds"))
+  write_rds(this_pbloss, paste0("../results/CDELOSS_ARMATJUMP2_",n_obs,"obs.rds"))
   
   processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
-  write_rds(processed_loss,paste0("../results/processed/ARMAJUMP2_",n_obs,"obs.rds"))
+  write_rds(processed_loss,paste0("../results/processed/ARMATJUMP2_",n_obs,"obs.rds"))
   
   gc()
 }
