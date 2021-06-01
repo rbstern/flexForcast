@@ -84,7 +84,24 @@ mat2_3d2 <- function(inmat, n) {
   array(unlist(split(inmat, gl(n, dims[1])), use.names = FALSE), dim = dims)
 }
 
+NA2max <- function(x) replace(x, is.na(x), max(x, na.rm = TRUE))
+
+remove_inf <- function(df){
+  
+  if (sum(apply(df, 2, function(x) any(is.infinite(x))))>0){
+    
+    df = do.call(data.frame,lapply(df, function(x) replace(x, is.infinite(x),NA)))
+    df = replace(df,TRUE,lapply(df, NA2max))
+    
+  }
+  return(df)
+}
+
 process_loss_outputs = function(pbloss,cdeloss){
+  
+  #substitute infs by column max 
+  pbloss = remove_inf(pbloss)
+  cdeloss = remove_inf(cdeloss)
   
   #PBLOSS
   pbloss_array=mat2_3d2(pbloss,n=n_iter)
