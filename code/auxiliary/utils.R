@@ -24,17 +24,31 @@ quantile = function(cde,alpha,z_grid){
     
   } else if (CDF[idx] > alpha){
     
-    a = z_grid[idx-1]
+    step = 1
+    
+    while(CDF[idx-step]==CDF[idx]){
+      step = step + 1
+    }
+    
+    a = z_grid[idx-step]
     b = z_grid[idx]
-    Fa = CDF[idx-1]
+    Fa = CDF[idx-step]
     Fb = CDF[idx]
+    
     q_alpha = ((b-a)*(alpha-Fa)/(Fb-Fa))+a
     
   } else {
+    
+    step = 1
+    
+    while(CDF[idx+step]==CDF[idx]){
+      step = step + 1
+    }
+    
     a = z_grid[idx]
-    b = z_grid[idx+1]
+    b = z_grid[idx+step]
     Fa = CDF[idx]
-    Fb = CDF[idx+1]
+    Fb = CDF[idx+step]
     q_alpha = ((b-a)*(alpha-Fa)/(Fb-Fa))+a
   }
   

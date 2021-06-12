@@ -43,6 +43,7 @@ NNKCDE.train = function(train_valid_test_sets,alpha_seq){
   bin_length = z_grid[2]-z_grid[1]
   
   cdes <- obj$predict(Xtest, z_grid)
+  cdes <- pmax(cdes,0)
   
   for (i in 1:nrow(cdes)){ # normalizacao das cdes
     cdes[i,]=cdes[i,]/sum(cdes[i,])
