@@ -50,10 +50,10 @@ for (n_obs in n_obs_list) {
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss
   
-  write_rds(this_pbloss, paste0("../results/PBLOSS_AR_NONLINEAR_VAR_",n_obs,"obs.rds"))
-  write_rds(this_cdeloss, paste0("../results/CDELOSS_AR_NONLINEAR_VAR_",n_obs,"obs.rds"))
+  write_rds(this_pbloss, paste0("../results/PBLOSS_ARNONLINEARVAR_",n_obs,"obs.rds"))
+  write_rds(this_cdeloss, paste0("../results/CDELOSS_ARNONLINEARVAR_",n_obs,"obs.rds"))
   
   processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
-  write_rds(processed_loss,paste0("../results/processed/AR_NONLINEAR_VAR_",n_obs,"obs.rds"))
+  write_rds(processed_loss,paste0("../results/processed/ARNONLINEARVAR_",n_obs,"obs.rds"))
   gc()
 }

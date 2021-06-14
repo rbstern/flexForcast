@@ -38,10 +38,10 @@ for (n_obs in n_obs_list) {
   this_pbloss  = this_loss$pbloss
   this_cdeloss = this_loss$cdeloss
   
-  write_rds(this_pbloss, paste0("../results/PBLOSS_SINE_AR_lagged",n_obs,"obs.rds"))
-  write_rds(this_cdeloss, paste0("../results/CDELOSS_SINE_AR_lagged",n_obs,"obs.rds"))
+  write_rds(this_pbloss, paste0("../results/PBLOSS_SINElagged_",n_obs,"obs.rds"))
+  write_rds(this_cdeloss, paste0("../results/CDELOSS_SINElagged_",n_obs,"obs.rds"))
   
   processed_loss = process_loss_outputs(this_pbloss,this_cdeloss)
-  write_rds(processed_loss,paste0("../results/processed/SINE_AR_lagged",n_obs,"obs.rds"))
+  write_rds(processed_loss,paste0("../results/processed/SINElagged_",n_obs,"obs.rds"))
   gc()
 }
