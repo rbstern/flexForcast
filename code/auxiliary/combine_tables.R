@@ -197,13 +197,15 @@ plots_paper <- function(arqs,which_quantiles,which_settings,methods_remove)
   data_cde <- arqs_subset %>% 
     read_cde_loss() %>% 
     mutate(n=as.numeric(stringi::stri_extract_last_regex(setting, "\\d+"))) %>% 
-    mutate(setting=str_replace_all(setting, "[:digit:]", ""))
+    #mutate(setting=str_replace_all(setting, "[:digit:]", ""))
+    mutate(setting=str_replace_all(setting, "\\_.*", ""))
   
   
   data_quantile <- arqs_subset %>% 
     read_quantile_loss()  %>% 
     mutate(n=as.numeric(stringi::stri_extract_last_regex(setting, "\\d+")))%>% 
-    mutate(setting=str_replace_all(setting, "[:digit:]", ""))
+    #mutate(setting=str_replace_all(setting, "[:digit:]", ""))
+    mutate(setting=str_replace_all(setting, "\\_.*", ""))
   
   if(!is.null(which_quantiles))
   {
@@ -300,7 +302,7 @@ plots_paper <- function(arqs,which_quantiles,which_settings,methods_remove)
 
 decimal <- 3
 which_quantiles <- c(0.5,0.8,0.95)
-which_settings<- c("^AR_3","^AR_NONLINEAR",
+which_settings<- c("^AR_3","^ARNONLINEAR",
                    "^ARMAJUMP","^ARMATJUMP",
                    "^JUMPDIFFUSION",
                    "^SINE")
