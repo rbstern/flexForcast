@@ -9,7 +9,7 @@ n_iter=100
 lags=3
 
 
-armatjump.sim = function(n_obs, c, ar1, ar2, ar3, std, jump_prob)
+armatjump.sim = function(n_obs, c, ar1, ar2, ar3, std, jump_prob, df=3)
 {
   
   #initial data points is distributed N(0,1)
