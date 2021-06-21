@@ -1,5 +1,4 @@
 
-
 GARCH.run=function(ytrain,yeval,ytest,alpha_seq,lags){
   
   try({
@@ -7,11 +6,10 @@ GARCH.run=function(ytrain,yeval,ytest,alpha_seq,lags){
                              variance.model=list(garchOrder=c(lags,lags)),
                              distribution.model = "std")
     
-
+    
     
     model.garch.fit = ugarchfit(data=c(ytrain,yeval,ytest), spec=model.garch,  solver = 'hybrid' ,out.sample = length(ytest))
     modelfor=ugarchforecast(model.garch.fit, data = ytest, n.ahead = 1,n.roll = length(ytest))
-    print(2)
     quantiles_list = list()
     pred=modelfor@forecast$seriesFor[1,1:length(ytest)]
     
@@ -23,11 +21,11 @@ GARCH.run=function(ytrain,yeval,ytest,alpha_seq,lags){
     }
     
   }
-,silent = TRUE)
+  ,silent = TRUE)
   if (!exists("modelfor")) {
-
-    fit=auto.arima(c(ytrain,yeval),max.p = lags,max.q =lags)
-    fit2=Arima(ytest,model=fit)
+    
+    fit2=auto.arima(c(ytrain,yeval),max.p = lags,max.q =lags)
+    
     
     quantiles_list = list()
     #pred=modelfor@forecast$seriesFor[1,1:length(ytest)]
@@ -56,7 +54,7 @@ GARCH.run=function(ytrain,yeval,ytest,alpha_seq,lags){
   } else{
     return(list(df_quantiles=df_quantiles,garch_model = fit2,z_grid=z_grid,convergence_garch=convergence_garch))
   }
-  }
+}
 
 GARCH.pinball_loss = function(garch_output,ytest,alpha_seq){
   
@@ -114,4 +112,3 @@ garch_training = function(train_valid_test_sets,alpha_seq,lags)
   
   list(cdeloss = cde_loss_garch, pbloss = garch_loss)
 }
-
