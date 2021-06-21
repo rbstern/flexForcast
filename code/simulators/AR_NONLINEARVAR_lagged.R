@@ -3,27 +3,27 @@ n_iter=100
 ar_param = 0.80
 #n_obs_list = c(1000,2500,5000,10000)
 n_obs_list = c(1000,2500,5000)
-lags=2
+lags=3
 
 sine_ar.sim = function(n){
   
   #initial data point is distributed N(0,1)
-  points = rnorm(2,0,1)
+  points = rnorm(3,0,1)
   #sd <- 0.25
   
   # we will generate (n+order) points so as to remove the first (order) points
-  for (i in 2:n){
+  for (i in 3:n){
     #sd <- sqrt(abs(cos((points[length(points)]))))
     #sd <- 1.5*sqrt(abs(points[length(points)])*exp(-2*sqrt(abs(points[length(points)]-0.5))))
     #sd <- ifelse(points[length(points)]<0,0.1,sqrt(abs(cos((points[length(points)])))))
     #sd <- ifelse(points[length(points)]<0,0.1,1)
-    sd <- ifelse(points[length(points)-1]< -0.5 | points[length(points)-1]> 0.5,0.1,1)
+    sd <- ifelse(points[length(points)-2]< -0.5 | points[length(points)-2]> 0.5,0.1,1)
     error_t = rnorm(1,0,sd)
     new_point = 0*points[length(points)]+error_t
     points = c(points,new_point)
   }
   
-  points = points[3:length(points)]
+  points = points[4:length(points)]
   return(points)
 }
 
