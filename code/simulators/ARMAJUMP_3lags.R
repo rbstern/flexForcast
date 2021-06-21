@@ -4,7 +4,8 @@ ar2=0.4
 ar3=0.4
 std=0.05
 jump_prob=0.05
-n_obs_list = c(1000,2500,5000)
+#n_obs_list = c(1000,2500,5000)
+n_obs_list = c(5000)
 n_iter=100
 lags=3
 
