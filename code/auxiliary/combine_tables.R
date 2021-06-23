@@ -4,6 +4,8 @@ library(kableExtra)
 library(cowplot)
 library(grid) 
 library(gtable)
+library(gridExtra)
+library(grid)
 
 convert_to_mean_se <- function(dados_todos)
 {
@@ -299,6 +301,200 @@ plots_paper <- function(arqs,which_quantiles,which_settings,methods_remove)
   
 }
 
+plots_paper_individual <- function(arqs,which_quantiles,which_settings,methods_remove)
+{
+  arqs_subset <- arqs 
+  
+  names_files <- basename(arqs_subset)
+  
+  if(!is.null(which_settings))
+  {
+    arqs_subset <- arqs_subset[names_files %>% 
+                                 str_detect(.,paste(which_settings, collapse="|"))]
+  }
+  
+  data_cde <- arqs_subset %>% 
+    read_cde_loss() %>% 
+    mutate(n=as.numeric(stringi::stri_extract_last_regex(setting, "\\d+"))) %>% 
+    #mutate(setting=str_replace_all(setting, "[:digit:]", ""))
+    mutate(setting=str_replace_all(setting, "\\_.*", ""))
+  
+  
+  data_quantile <- arqs_subset %>% 
+    read_quantile_loss()  %>% 
+    mutate(n=as.numeric(stringi::stri_extract_last_regex(setting, "\\d+")))%>% 
+    #mutate(setting=str_replace_all(setting, "[:digit:]", ""))
+    mutate(setting=str_replace_all(setting, "\\_.*", ""))
+  
+  if(!is.null(which_quantiles))
+  {
+    data_quantile <- data_quantile %>% 
+      filter(quantile%in%which_quantiles)
+  }
+  
+  if(!is.null(methods_remove))
+  {
+    data_quantile <- data_quantile %>% 
+      select(!contains(methods_remove))
+    
+    data_cde <- data_cde %>% 
+      select(!contains(methods_remove))
+  }
+  
+  data_cde <- data_cde %>% 
+    pivot_longer(NNKCDE:FLEX_RF,names_to = "method",
+                 values_to = "CDE",names_repair = "unique") %>% 
+    pivot_wider(names_from = statistic,values_from = CDE) %>% 
+    mutate(quantile="CDE")
+  
+  data_quantile <- data_quantile %>% 
+    pivot_longer(QAR:FLEX_RF,names_to = "method",
+                 values_to = "Pinball",names_repair = "unique") %>% 
+    pivot_wider(names_from = statistic,values_from = Pinball) %>% 
+    mutate(quantile=as.character(quantile))
+  
+  data_cde$setting <- recode(data_cde$setting, 
+                             SINElagged = "NONLINEAR MEAN", 
+                             AR__obs = "AR",
+                             ARNONLINEARVARlagged = "NONLINEAR VARIANCE",
+                             ARMA__obs="ARMA",
+                             ARMAJUMP3="ARMA JUMP",
+                             ARMATJUMP3="ARMA JUMP T",
+                             JUMPDIFFUSION_obs="JUMP DIFFUSION")
+  
+  data_quantile$setting <- recode(data_quantile$setting, 
+                                  SINElagged = "NONLINEAR MEAN", 
+                                  AR__obs = "AR",
+                                  ARNONLINEARVARlagged = "NONLINEAR VARIANCE",
+                                  ARMA__obs="ARMA",
+                                  ARMAJUMP3="ARMA JUMP",
+                                  ARMATJUMP3="ARMA JUMP T",
+                                  JUMPDIFFUSION_obs="JUMP DIFFUSION")
+  
+  data_quantile$method <- recode(data_quantile$method, 
+                                 FLEX_RF = "FLEXCODE")
+  
+  data_cde$method <- recode(data_cde$method, 
+                                 FLEX_RF = "FLEXCODE")
+                                  
+  data_quantile$quantile <- recode(data_quantile$quantile,
+                                   "0.5"="50%",
+                                   "0.8"="80%",
+                                   "0.95"="95%",
+                                   "CDE"="CDE loss")
+  
+  settings <- unique(data_quantile$setting)
+  plots <- list()
+  grobs <- list()
+  ii <- 1
+  for(this_setting in seq_along(settings))
+  {
+    data_sub <- data_quantile %>% 
+      filter(setting==settings[this_setting])
+    data_sub$title <- settings[this_setting]
+    plots[[this_setting]] <- ggplot(data_sub)+
+      geom_line(aes(x=n,y=mean,color=method),size=1.2)+
+      facet_wrap(.~quantile, scales="free",ncol = 3)+
+      theme_bw(base_size = 12)+
+      #facet_grid(. ~ title)+
+      scale_color_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
+      #scale_color_brewer(name = "",palette="Dark2")+ 
+      theme(legend.position="none",
+            axis.text.x = element_text(size=6),
+            plot.title = element_text(hjust = 0.5))+
+      scale_x_continuous(breaks=unique(data_quantile$n))+
+      #ggtitle(settings[this_setting])+
+      xlab("Time Series Length")+
+      ylab("Quantile Loss")
+    
+    title <- grobTree(rectGrob(gp=gpar(fill="#E2F5DD",col="#E2F5DD")),
+                     textGrob(data_sub$title, x=0.5, hjust=0.5,y=0.5,
+                              gp=gpar(col="black", cex=1,fontface="bold")))
+    
+    grobs[[ii]] <-  title
+    grobs[[ii+1]] <-  plots[[this_setting]]
+    grobs[[ii+2]] <-rectGrob(gp=gpar(col=NA))
+    
+    #ii <- ii+2
+    ii <- ii+3
+  }
+  
+  legend <- get_legend(
+    # create some space to the left of the legend
+    plots[[1]] + theme(legend.box.margin = margin(0, 0, 0, 6)) +
+      theme(legend.position = "top",legend.title=element_text(size=25))
+  )
+  
+  
+  g <- grid.arrange(grobs=c(list(legend),grobs),
+                    ncol=1,heights=c(2,rep(c(0.6,9,0.6),
+                                           length.out=length(grobs))))
+  
+  ggsave("../figures/loss_values_quantile.png",g,
+         height = 14,width = 7)
+  
+  
+  plots <- list()
+  grobs <- list()
+  ii <- 1
+  for(this_setting in seq_along(settings))
+  {
+    data_sub <- data_cde %>% 
+      filter(setting==settings[this_setting])
+    data_sub$title <- settings[this_setting]
+    plots[[this_setting]] <- ggplot(data_sub)+
+      geom_line(aes(x=n,y=mean,color=method),size=1.2)+
+      #facet_wrap(.~quantile, scales="free",ncol = 3)+
+      theme_bw(base_size = 12)+
+      #facet_grid(. ~ title)+
+      scale_color_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
+      #scale_color_brewer(name = "",palette="Dark2")+ 
+      theme(legend.position="none",
+            axis.text.x = element_text(size=6),
+            plot.title = element_text(hjust = 0.5))+
+      scale_x_continuous(breaks=unique(data_quantile$n))+
+      #ggtitle(settings[this_setting])+
+      xlab("Time Series Length")+
+      ylab("CDE Loss")
+    
+    title <- grobTree(rectGrob(gp=gpar(fill="#E2F5DD",col="#E2F5DD")),
+                      textGrob(data_sub$title, x=0.5, hjust=0.5,y=0.5,
+                               gp=gpar(col="black", cex=1,fontface="bold")))
+    
+    grobs[[ii]] <-  title
+    grobs[[ii+1]] <-  plots[[this_setting]]
+    grobs[[ii+2]] <-rectGrob(gp=gpar(col=NA))
+    
+    #ii <- ii+2
+    ii <- ii+3
+  }
+  
+  legend <- get_legend(
+    # create some space to the left of the legend
+    plots[[1]] + theme(legend.box.margin = margin(0, 0, 0, 6)) +
+      theme(legend.position = "top",legend.title=element_text(size=25))
+  )
+  
+  
+  #g <- grid.arrange(grobs=c(list(legend),grobs),
+  #                  ncol=2,heights=c(2,rep(c(0.6,9,0.6),
+  #                                         length.out=length(grobs))))
+  
+  
+  
+  lay <- cbind(c(1,1,2,3,3,3,3,3,3,3,4,8,9,9,9,9,9,9,9,10,14,15,15,15,15,15,15,15,16),
+               c(1,1,5,6,6,6,6,6,6,6,7,11,12,12,12,12,12,12,12,13,17,18,18,18,18,18,18,18,19))
+  g <- grid.arrange(grobs=c(list(legend),grobs),
+                    layout_matrix=lay)
+  
+  
+  ggsave("../figures/loss_values_cde.png",g,
+         height = 14,width = 7)
+  
+  
+  
+}
+
 
 decimal <- 3
 which_quantiles <- c(0.5,0.8,0.95)
@@ -311,5 +507,6 @@ folder_files <- "../results/processed/"
 arqs <- list.files(folder_files,full.names=TRUE)
 
 plots_paper(arqs,which_quantiles,which_settings,methods_remove)
+plots_paper_individual(arqs,which_quantiles,which_settings,methods_remove)
 
 all_tables(arqs,1000,which_quantiles,which_settings,methods_remove)
