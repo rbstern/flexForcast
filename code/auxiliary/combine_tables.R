@@ -301,7 +301,7 @@ plots_paper <- function(arqs,which_quantiles,which_settings,methods_remove)
   
 }
 
-plots_paper_individual <- function(arqs,which_quantiles,which_settings,methods_remove)
+plots_paper_individual <- function(arqs,which_quantiles,which_settings,methods_remove,se=TRUE)
 {
   arqs_subset <- arqs 
   
@@ -360,7 +360,7 @@ plots_paper_individual <- function(arqs,which_quantiles,which_settings,methods_r
                              ARMA__obs="ARMA",
                              ARMAJUMP3="ARMA JUMP",
                              ARMATJUMP3="ARMA JUMP T",
-                             JUMPDIFFUSION_obs="JUMP DIFFUSION")
+                             JUMPDIFFUSION="JUMP DIFFUSION")
   
   data_quantile$setting <- recode(data_quantile$setting, 
                                   SINElagged = "NONLINEAR MEAN", 
@@ -369,19 +369,21 @@ plots_paper_individual <- function(arqs,which_quantiles,which_settings,methods_r
                                   ARMA__obs="ARMA",
                                   ARMAJUMP3="ARMA JUMP",
                                   ARMATJUMP3="ARMA JUMP T",
-                                  JUMPDIFFUSION_obs="JUMP DIFFUSION")
+                                  JUMPDIFFUSION="JUMP DIFFUSION")
   
   data_quantile$method <- recode(data_quantile$method, 
                                  FLEX_RF = "FLEXCODE")
   
   data_cde$method <- recode(data_cde$method, 
-                                 FLEX_RF = "FLEXCODE")
-                                  
+                            FLEX_RF = "FLEXCODE")
+  
   data_quantile$quantile <- recode(data_quantile$quantile,
                                    "0.5"="50%",
                                    "0.8"="80%",
                                    "0.95"="95%",
                                    "CDE"="CDE loss")
+  
+  
   
   settings <- unique(data_quantile$setting)
   plots <- list()
@@ -392,24 +394,46 @@ plots_paper_individual <- function(arqs,which_quantiles,which_settings,methods_r
     data_sub <- data_quantile %>% 
       filter(setting==settings[this_setting])
     data_sub$title <- settings[this_setting]
-    plots[[this_setting]] <- ggplot(data_sub)+
-      geom_line(aes(x=n,y=mean,color=method),size=1.2)+
-      facet_wrap(.~quantile, scales="free",ncol = 3)+
-      theme_bw(base_size = 12)+
-      #facet_grid(. ~ title)+
-      scale_color_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
-      #scale_color_brewer(name = "",palette="Dark2")+ 
-      theme(legend.position="none",
-            axis.text.x = element_text(size=6),
-            plot.title = element_text(hjust = 0.5))+
-      scale_x_continuous(breaks=unique(data_quantile$n))+
-      #ggtitle(settings[this_setting])+
-      xlab("Time Series Length")+
-      ylab("Quantile Loss")
+    
+    if(se)
+    {
+      plots[[this_setting]] <- ggplot(data_sub,aes(x=n,y=mean,
+                                                   ymin=mean-se,ymax=mean+se,fill=method))+
+        geom_line(aes(color=method),size=1.2)+
+        geom_ribbon(alpha=0.2)+
+        facet_wrap(.~quantile, scales="free",ncol = 3)+
+        theme_bw(base_size = 12)+
+        #facet_grid(. ~ title)+
+        scale_color_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
+        scale_fill_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
+        #scale_color_brewer(name = "",palette="Dark2")+ 
+        theme(legend.position="none",
+              axis.text.x = element_text(size=6),
+              plot.title = element_text(hjust = 0.5))+
+        scale_x_continuous(breaks=unique(data_quantile$n))+
+        #ggtitle(settings[this_setting])+
+        xlab("Time Series Length")+
+        ylab("Quantile Loss")
+    } else {
+      plots[[this_setting]] <- ggplot(data_sub)+
+        geom_line(aes(x=n,y=mean,color=method),size=1.2)+
+        facet_wrap(.~quantile, scales="free",ncol = 3)+
+        theme_bw(base_size = 12)+
+        #facet_grid(. ~ title)+
+        scale_color_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
+        #scale_color_brewer(name = "",palette="Dark2")+ 
+        theme(legend.position="none",
+              axis.text.x = element_text(size=6),
+              plot.title = element_text(hjust = 0.5))+
+        scale_x_continuous(breaks=unique(data_quantile$n))+
+        #ggtitle(settings[this_setting])+
+        xlab("Time Series Length")+
+        ylab("Quantile Loss")
+    }
     
     title <- grobTree(rectGrob(gp=gpar(fill="#E2F5DD",col="#E2F5DD")),
-                     textGrob(data_sub$title, x=0.5, hjust=0.5,y=0.5,
-                              gp=gpar(col="black", cex=1,fontface="bold")))
+                      textGrob(data_sub$title, x=0.5, hjust=0.5,y=0.5,
+                               gp=gpar(col="black", cex=1,fontface="bold")))
     
     grobs[[ii]] <-  title
     grobs[[ii+1]] <-  plots[[this_setting]]
@@ -434,6 +458,7 @@ plots_paper_individual <- function(arqs,which_quantiles,which_settings,methods_r
          height = 14,width = 7)
   
   
+
   plots <- list()
   grobs <- list()
   ii <- 1
@@ -442,20 +467,46 @@ plots_paper_individual <- function(arqs,which_quantiles,which_settings,methods_r
     data_sub <- data_cde %>% 
       filter(setting==settings[this_setting])
     data_sub$title <- settings[this_setting]
-    plots[[this_setting]] <- ggplot(data_sub)+
-      geom_line(aes(x=n,y=mean,color=method),size=1.2)+
-      #facet_wrap(.~quantile, scales="free",ncol = 3)+
-      theme_bw(base_size = 12)+
-      #facet_grid(. ~ title)+
-      scale_color_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
-      #scale_color_brewer(name = "",palette="Dark2")+ 
-      theme(legend.position="none",
-            axis.text.x = element_text(size=6),
-            plot.title = element_text(hjust = 0.5))+
-      scale_x_continuous(breaks=unique(data_quantile$n))+
-      #ggtitle(settings[this_setting])+
-      xlab("Time Series Length")+
-      ylab("CDE Loss")
+    
+    if(se)
+    {
+      
+      plots[[this_setting]] <-    ggplot(data_sub,aes(x=n,y=mean,fill=method))+
+        geom_line(aes(color=method),size=1.2)+
+        geom_ribbon(aes(ymin=mean-se,ymax=mean+se),alpha=0.2)+
+        #facet_wrap(.~quantile, scales="free",ncol = 3)+
+        theme_bw(base_size = 12)+
+        #facet_grid(. ~ title)+
+        scale_color_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
+        scale_fill_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
+        #scale_color_brewer(name = "",palette="Dark2")+ 
+        theme(legend.position="none",
+              axis.text.x = element_text(size=6),
+              plot.title = element_text(hjust = 0.5))+
+        scale_x_continuous(breaks=unique(data_quantile$n))+
+        #ggtitle(settings[this_setting])+
+        xlab("Time Series Length")+
+        ylab("CDE Loss")
+      
+      
+    } else {
+      
+      plots[[this_setting]] <- ggplot(data_sub)+
+        geom_line(aes(x=n,y=mean,color=method),size=1.2)+
+        #facet_wrap(.~quantile, scales="free",ncol = 3)+
+        theme_bw(base_size = 12)+
+        #facet_grid(. ~ title)+
+        scale_color_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
+        #scale_color_brewer(name = "",palette="Dark2")+ 
+        theme(legend.position="none",
+              axis.text.x = element_text(size=6),
+              plot.title = element_text(hjust = 0.5))+
+        scale_x_continuous(breaks=unique(data_quantile$n))+
+        #ggtitle(settings[this_setting])+
+        xlab("Time Series Length")+
+        ylab("CDE Loss")
+      
+    }
     
     title <- grobTree(rectGrob(gp=gpar(fill="#E2F5DD",col="#E2F5DD")),
                       textGrob(data_sub$title, x=0.5, hjust=0.5,y=0.5,
@@ -507,6 +558,6 @@ folder_files <- "../results/processed/"
 arqs <- list.files(folder_files,full.names=TRUE)
 
 plots_paper(arqs,which_quantiles,which_settings,methods_remove)
-plots_paper_individual(arqs,which_quantiles,which_settings,methods_remove)
+plots_paper_individual(arqs,which_quantiles,which_settings,methods_remove,se = TRUE)
 
 all_tables(arqs,1000,which_quantiles,which_settings,methods_remove)
