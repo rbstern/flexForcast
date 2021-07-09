@@ -57,7 +57,9 @@ if (run == TRUE){
   n_obs=1000
   cdelosses = list()
   
-  for (lags in c(1,3,5,10,15,20,25,50,100)){
+  grid_lags <- c(1,3,5,10,15,20,25,50)
+  
+  for (lags in grid_lags){
     
     this_simulator = partial(sine_ar_simulator,n_obs=n_obs)
     this_loss = simulation_run(this_simulator, lags=lags, n_iter = n_iter)
@@ -73,16 +75,16 @@ if (run == TRUE){
     cdelosses[[i]] = dfi
   }
   
-  df = matrix(nrow=6,ncol=3)
-  dfse = matrix(nrow=6,ncol=3)
-  for (i in 1:6){
+  df = matrix(nrow=length(grid_lags),ncol=3)
+  dfse = matrix(nrow=length(grid_lags),ncol=3)
+  for (i in 1:length(grid_lags)){
     losses_i=colMeans(cdelosses[[i]])
-    losses_se = apply(cdelosses[[i]], 2,sd)
+    losses_se = apply(cdelosses[[i]], 2,sd)/sqrt(nrow(cdelosses[[i]]))
     df[i,]=losses_i
     dfse[i,]=losses_se
   }
-  colnames(df)=c("GARCH","NNKCDE","FLEX_RF")
-  colnames(dfse)=c("GARCHse","NNKCDEse","FLEX_RFse")
+  colnames(df)=c('NNKCDE','GARCH','FLEX_RF')
+  colnames(dfse)=c('NNKCDEse','GARCHse','FLEX_RFse')
   df = cbind(df,dfse)
   df=as.data.frame(df)
   
@@ -93,17 +95,60 @@ if (run == TRUE){
   df['FLEX_RF_low']=df['FLEX_RF']-df['FLEX_RFse']
   df['FLEX_RF_up']=df['FLEX_RF']+df['FLEX_RFse']
   
-  library(ggplot2)
-  
-  x= c(1,3,5,10,15,20,25,50,100)
-  ggplot(data=df, aes(x=x))+
-    geom_ribbon(aes(ymin=GARCH_low,ymax=GARCH_up),alpha=0.25)+
-    geom_line(aes(y=GARCH,color="blue"),size=0.9)+
-    geom_ribbon(aes(ymin=NNKCDE_low,ymax=NNKCDE_up),alpha=0.25)+
-    geom_line(aes(y=NNKCDE,color="red"),size=0.9)+
-    geom_ribbon(aes(ymin=FLEX_RF_low,ymax=FLEX_RF_up),alpha=0.25)+
-    geom_line(aes(y=FLEX_RF,color="green"),size=0.9)+
-    scale_color_discrete(name = "Methods", labels = c("GARCH","FLEXCODE-RF","NNK-CDE"))+
-    ylab("CDE loss") + xlab("No. of lags") +
-    scale_x_continuous(breaks=x)
 }
+
+library(ggplot2)
+
+
+ggplot(data=df, aes(x=grid_lags))+
+  geom_ribbon(aes(ymin=GARCH_low,ymax=GARCH_up),alpha=0.25)+
+  geom_line(aes(y=GARCH,color="blue"),size=0.9)+
+  geom_ribbon(aes(ymin=NNKCDE_low,ymax=NNKCDE_up),alpha=0.25)+
+  geom_line(aes(y=NNKCDE,color="red"),size=0.9)+
+  geom_ribbon(aes(ymin=FLEX_RF_low,ymax=FLEX_RF_up),alpha=0.25)+
+  geom_line(aes(y=FLEX_RF,color="green"),size=0.9)+
+  scale_color_discrete(name = "Methods", labels = c("GARCH","FLEXCODE-RF","NNK-CDE"))+
+  ylab("CDE loss") + xlab("No. of lags") +
+  scale_x_continuous(breaks=grid_lags)
+
+df$lags <- grid_lags
+df_tidy_mean <- pivot_longer(df%>% dplyr::select(-ends_with("_up"))%>% 
+                               dplyr::select(-ends_with("_low")),
+                             cols=c("NNKCDE","FLEX_RF","GARCH"),
+                             names_to = "method",values_to = "mean")%>% 
+  dplyr::select(lags,method,mean) %>% 
+  arrange(lags,method)
+
+df_tidy_se <- pivot_longer(df%>% dplyr::select(-ends_with("_up"))%>% 
+                             dplyr::select(-ends_with("_low")),
+                           cols=ends_with("se"),
+                           names_to = "method",
+                           values_to = "se") %>% 
+  dplyr::select(lags,method,se)%>% 
+  mutate(method=recode(method,GARCHse="GARCH",FLEX_RFse="FLEX_RF",NNKCDEse="NNKCDE"))%>% 
+  arrange(lags,method)
+
+
+df_tidy <- left_join(df_tidy_mean,df_tidy_se,by=c("lags","method")) 
+
+saveRDS(df_tidy,"../results/lags/sine_lagged.RDS")
+
+
+
+ggplot(df_tidy,aes(x=lags,y=mean,
+                   ymin=mean-se,ymax=mean+se,fill=method))+
+  geom_line(aes(color=method),size=1.2)+
+  geom_ribbon(alpha=0.2)+
+  theme_bw(base_size = 12)+
+  #facet_grid(. ~ title)+
+  scale_color_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
+  scale_fill_manual(name="",values=c("#000000", "#1b9e77", "#d95f02","#7570b3"))+
+  #scale_color_brewer(name = "",palette="Dark2")+ 
+  theme(legend.position="top",
+        axis.text.x = element_text(size=6),
+        plot.title = element_text(hjust = 0.5))+
+  scale_x_continuous(breaks=unique(lags))+
+  #ggtitle(settings[this_setting])+
+  xlab("Number of lags")+
+  ylab("CDE Loss")
+

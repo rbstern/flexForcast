@@ -77,8 +77,8 @@ if (run == TRUE){
     df[i,]=losses_i
     dfse[i,]=losses_se
   }
-  colnames(df)=c("GARCH","NNKCDE","FLEX_RF")
-  colnames(dfse)=c("GARCHse","NNKCDEse","FLEX_RFse")
+  colnames(df)=c('NNKCDE','GARCH','FLEX_RF')
+  colnames(dfse)=c('NNKCDEse','GARCHse','FLEX_RFse')
   df = cbind(df,dfse)
   df=as.data.frame(df)
   
