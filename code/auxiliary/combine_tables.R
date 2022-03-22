@@ -533,14 +533,20 @@ plots_paper_individual <- function(arqs,which_quantiles,which_settings,methods_r
   
   
   
-  lay <- cbind(c(1,1,2,3,3,3,3,3,3,3,4,8,9,9,9,9,9,9,9,10,14,15,15,15,15,15,15,15,16),
-               c(1,1,5,6,6,6,6,6,6,6,7,11,12,12,12,12,12,12,12,13,17,18,18,18,18,18,18,18,19))
+  #lay <- cbind(c(1,1,2,3,3,3,3,3,3,3,4,8,9,9,9,9,9,9,9,10,14,15,15,15,15,15,15,15,16),
+  #             c(1,1,5,6,6,6,6,6,6,6,7,11,12,12,12,12,12,12,12,13,17,18,18,18,18,18,18,18,19))
+  #g <- grid.arrange(grobs=c(list(legend),grobs),
+  #                  layout_matrix=lay)
+  
+  lay <- cbind(c(1,1,2,3,3,3,3,3,3,3,4,11,12,12,12,12,12,12,12,13),
+               c(1,1,5,6,6,6,6,6,6,6,7,14,15,15,15,15,15,15,15,16),
+               c(1,1,8,9,9,9,9,9,9,9,10,17,18,18,18,18,18,18,18,19))
   g <- grid.arrange(grobs=c(list(legend),grobs),
                     layout_matrix=lay)
   
   
   ggsave("../figures/loss_values_cde.png",g,
-         height = 14,width = 7)
+         height = 7,width = 7)
   
   
   
